@@ -1,21 +1,21 @@
 using Godot;
-using System;
 
-public class Main : Spatial
-{
-    // Declare member variables here. Examples:
-    // private int a = 2;
-    // private string b = "text";
+namespace Godtris{
+	public class Main : Spatial
+	{
+		public override void _Ready()
+		{
+			GD.Print("Godtris");
+			PackedScene scene = ResourceLoader.Load<PackedScene>("res://Game.tscn");
+			Game game = scene.Instance() as Game;
+			Position3D pos = GetNode("ScenePosition") as Position3D;
+			game.Translate(pos.Transform.origin);
+			AddChild(game);
+		}
 
-    // Called when the node enters the scene tree for the first time.
-    public override void _Ready()
-    {
-        GD.Print("Godtris");
-    }
+		public override void _Process(float delta)
+		{
 
-//  // Called every frame. 'delta' is the elapsed time since the previous frame.
-//  public override void _Process(float delta)
-//  {
-//      
-//  }
+		}
+	}
 }
