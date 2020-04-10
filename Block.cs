@@ -6,13 +6,14 @@ namespace Godtris{
     private string _color;
     private Game _game;
     private Spatial _block;
+    private bool _empty;
 
     public Block(int x, int y, Game game){
       this.x = x;
       this.y = y;
       this._game = game;
-      this._color = "black";
-      this._block = Godtris.Utils.GetBlock(Color.ColorN(this._color, 0.0f));
+      this._block = Godtris.Utils.GetBlock(Color.ColorN("black"));
+      this.empty = true;
       this._block.Translate(new Vector3(
       this._game.tetrionBottomLeftPosition.x + this.x * Godtris.Utils.BLOCK_SIZE, 
       this._game.tetrionBottomLeft.Transform.origin.y + this.y * Godtris.Utils.BLOCK_SIZE, 
@@ -28,7 +29,7 @@ namespace Godtris{
         MeshInstance mesh = _block.GetNode("MeshInstance") as MeshInstance;
         SpatialMaterial material = mesh.GetSurfaceMaterial(0) as SpatialMaterial;
         _color = value;
-        material.AlbedoColor = Color.ColorN(_color, _color == "black" ? 0.0f : 1.0f);
+        material.AlbedoColor = Color.ColorN(_color);
       }
     }
 
@@ -36,8 +37,16 @@ namespace Godtris{
       color = _color;
     }
 
-    public bool IsEmpty(){
-      return _color == "black";
+    public bool empty{
+      get{
+        return _empty;
+      }
+      set{
+        if(value==true){
+          color = "black";
+        }
+        _empty = value;
+      }
     }
   }
 }

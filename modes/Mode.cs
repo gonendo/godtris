@@ -20,8 +20,12 @@ namespace Godtris{
       this._history = new LinkedList<Piece>();
 
       //DEBUG CODE
-      for(int i=0; i < 20; i++)
-      _history.AddLast(new Piece(Piece.I, this._blocks));
+      for(int i=0; i < 20; i++){
+        _history.AddLast(new Piece(Piece.I, this._blocks));
+      }
+
+      //START
+      GetCurrentPiece().Render();
     }
 
     /*
@@ -35,15 +39,23 @@ namespace Godtris{
 
       if(_waitForLockDelay && (_count3 >= _level.lockDelay)){
         #if (DEBUG)
-          GD.Print("Wait For ARE");
+          GD.Print("End Lock Delay "+GetCurrentPiece());
+          GD.Print("Wait For ARE "+GetCurrentPiece());
         #endif
         _waitForARE = true;
         _count2 = 0;
         _waitForLockDelay = false;
       }
       if(_waitForARE && _count2 >= _level.are){
+        #if (DEBUG)
+          GD.Print("End ARE "+GetCurrentPiece());
+        #endif
         if(_history.Count > 0){
           _history.RemoveFirst();
+          Piece next = GetCurrentPiece();
+          if(next!=null){
+            next.Render();
+          }
         }
         _waitForARE = false;
         _waitForLockDelay = false;
@@ -52,10 +64,10 @@ namespace Godtris{
         for(int i=0; i < _count; i++){
           Piece piece = GetCurrentPiece();
           if(piece!=null){
-            if(!piece.MoveDown()){
+            if(!piece.MoveDown() && !_waitForARE){
               if(!_waitForLockDelay){
                 #if (DEBUG)
-                  GD.Print("Wait For Lock Delay");
+                  GD.Print("Wait For Lock Delay "+GetCurrentPiece());
                 #endif
                 _count3 = 0;
               }
