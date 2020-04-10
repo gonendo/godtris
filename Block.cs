@@ -7,6 +7,7 @@ namespace Godtris{
     private Game _game;
     private Spatial _block;
     private bool _empty;
+    private bool _locked;
 
     public Block(int x, int y, Game game){
       this.x = x;
@@ -30,6 +31,18 @@ namespace Godtris{
         SpatialMaterial material = mesh.GetSurfaceMaterial(0) as SpatialMaterial;
         _color = value;
         material.AlbedoColor = Color.ColorN(_color);
+        if(_locked){
+          material.AlbedoColor = material.AlbedoColor.Darkened(0.5f);
+        }
+      }
+    }
+
+    public bool locked{
+      get{
+        return _locked;
+      }
+      set{
+        _locked = value;
       }
     }
 

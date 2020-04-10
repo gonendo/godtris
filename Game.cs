@@ -8,8 +8,10 @@ namespace Godtris{
 		public Vector3 tetrionBottomLeftPosition;
 		private List<Block> _blocks;
 		public Mode mode;
+		public Controls controls;
+		private bool _started = false;
 
-		public override void _Ready()
+		public async override void _Ready()
 		{
 			GD.Print("Game ready");
 			tetrionBottomLeft = GetNode("Tetrion/BottomLeft") as Position3D;
@@ -21,15 +23,30 @@ namespace Godtris{
 				}
 			}
 
-			//Default Mode is TGM2
-			mode = new TGM2Mode(_blocks, 100);
+			Timer t = new Timer();
+      t.OneShot = true;
+      t.WaitTime = 1;
+			t.Autostart = true;
+      AddChild(t);
+			await ToSignal(t, "timeout");
+			t.QueueFree();
+			StartTGM2();
 		}
 		public override void _PhysicsProcess(float delta)
 		{
-			mode.update();
-			foreach(Block block in _blocks){
-				block.Render();
+			if(_started){
+				mode.Update();
+				controls.Update();
+				foreach(Block block in _blocks){
+					block.Render();
+				}
 			}
 		}
+
+		private void StartTGM2(){
+			mode = new TGM2Mode(_blocks, 0);
+			controls = new Controls(mode);
+			_started = true;
+		} 
 	}
 }

@@ -56,6 +56,22 @@ namespace Godtris{
       _gravities.Add(500, 5120); // 20G
 
       SetLevel(level);
+
+      //DEBUG CODE
+      _history.Add(new Piece(Piece.EMPTY, this._blocks));
+      
+      for(int i=0; i < 2; i++){
+        _history.Add(new Piece(Piece.I, this._blocks));
+        _history.Add(new Piece(Piece.Z, this._blocks));
+        _history.Add(new Piece(Piece.S, this._blocks));
+        _history.Add(new Piece(Piece.J, this._blocks));
+        _history.Add(new Piece(Piece.L, this._blocks));
+        _history.Add(new Piece(Piece.O, this._blocks));
+        _history.Add(new Piece(Piece.T, this._blocks));
+      }
+
+      //START
+      RenderNextPiece(true);
     }
 
     public override Level GetLevel(int level){

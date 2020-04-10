@@ -2,6 +2,7 @@ using Godot;
 using System.Collections.Generic;
 namespace Godtris{
   public class Piece{
+    public const string EMPTY = "EMPTY";
     public const string I = "I";
     public const string Z = "Z";
     public const string S = "S";
@@ -10,9 +11,11 @@ namespace Godtris{
     public const string O = "O";
     public const string T = "T";
     private string _color;
+    private bool _locked;
     private List<Block> _blocks;
     private List<Block> _current;
     private string _name;
+
     public string name{
       get{
         return _name;
@@ -20,6 +23,18 @@ namespace Godtris{
     }
     public List<Block> GetBlocks(){
       return _current;
+    }
+
+    public bool locked{
+      get{
+        return _locked;
+      }
+      set{
+        _locked = value;
+        foreach(Block block in _current){
+          block.locked = _locked;
+        }
+      }
     }
 
     public Piece(string name, List<Block> blocks){
@@ -120,9 +135,9 @@ namespace Godtris{
       }
     }
 
-    public bool MoveDown(){
+    private bool Move(int xOffset, int yOffset){
       foreach(Block block in _current){
-        Block nb = _blocks.Find(b => b.x == block.x && b.y == block.y-1);
+        Block nb = _blocks.Find(b => b.x == block.x+xOffset && b.y == block.y+yOffset);
         if(_current.IndexOf(nb)==-1){
           if (nb!=null){
             if(!nb.empty){
@@ -139,7 +154,7 @@ namespace Godtris{
         if(newBlocks.IndexOf(block)==-1){
           block.empty = true;
         }
-        Block nb = _blocks.Find(b => b.x == block.x && b.y == block.y-1);
+        Block nb = _blocks.Find(b => b.x == block.x+xOffset && b.y == block.y+yOffset);
         if (nb!=null){
           nb.color = _color;
           nb.empty = false;
@@ -148,6 +163,16 @@ namespace Godtris{
       }
       _current = newBlocks;
       return true;
+    }
+
+    public bool MoveDown(){
+      return Move(0, -1);
+    }
+    public bool MoveLeft(){
+      return Move(-1, 0);
+    }
+    public bool MoveRight(){
+      return Move(1, 0);
     }
 
     public override string ToString(){
