@@ -22,7 +22,7 @@ namespace Godtris{
 			}
 
 			//Default Mode is TGM2
-			mode = new TGM2Mode(_blocks, 500);
+			mode = new TGM2Mode(_blocks, 100);
 		}
 		public override void _PhysicsProcess(float delta)
 		{
