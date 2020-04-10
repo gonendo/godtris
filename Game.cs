@@ -24,10 +24,10 @@ namespace Godtris{
 			}
 
 			Timer t = new Timer();
-      t.OneShot = true;
-      t.WaitTime = 1;
+			t.OneShot = true;
+			t.WaitTime = 1;
 			t.Autostart = true;
-      AddChild(t);
+			AddChild(t);
 			await ToSignal(t, "timeout");
 			t.QueueFree();
 			StartTGM2();
