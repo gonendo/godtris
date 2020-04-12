@@ -19,6 +19,9 @@ namespace Godtris{
     
     protected bool _autoShift = false;
 
+    protected List<Spatial> previewBlocks;
+    protected string previewPiece;
+
     public Mode(List<Block> blocks){
       this._blocks = blocks;
       this._history = new List<Piece>();
@@ -159,6 +162,80 @@ namespace Godtris{
 
     public virtual void SetLevel(int level){
 
+    }
+
+    protected void AddPreviewBlock(Game game, int x, int y, string color){
+      if(previewBlocks==null){
+        previewBlocks = new List<Spatial>();
+      }
+      Spatial block = Godtris.Utils.GetBlock(Color.ColorN(color));
+      block.Translate(new Vector3(
+      game.previewPosition.Transform.origin.x + x * Godtris.Utils.BLOCK_SIZE, 
+      game.previewPosition.Transform.origin.y + y * Godtris.Utils.BLOCK_SIZE, 
+      0));
+      game.AddChild(block);
+      previewBlocks.Add(block);
+    }
+
+    public virtual void RenderPreview(Game game){
+      Piece piece = GetNextPiece();
+      if(piece!=null && previewPiece!=piece.name){
+        if(previewBlocks!=null){
+          foreach(Spatial block in previewBlocks){
+            block.QueueFree();
+          }
+          previewBlocks.Clear();
+        }
+        switch(piece.name){
+          case Piece.I:
+            for(int i=3; i < 7; i++){
+              AddPreviewBlock(game, i, 0, "red");
+            }
+            break;
+          case Piece.Z:
+            for(int i=3; i < 5; i++){
+              AddPreviewBlock(game, i, 0, "green");
+            }
+            for(int i=4; i < 6; i++){
+              AddPreviewBlock(game, i, -1, "green");
+            }
+            break;
+          case Piece.S:
+            for(int i=4; i < 6; i++){
+              AddPreviewBlock(game, i, 0, "magenta");
+            }
+            for(int i=3; i < 5; i++){
+              AddPreviewBlock(game, i, -1, "magenta");
+            }
+            break;
+          case Piece.J:
+            for(int i=3; i < 6; i++){
+              AddPreviewBlock(game, i, 0, "blue");
+            }
+            AddPreviewBlock(game, 5, -1, "blue");
+            break;
+          case Piece.L:
+            for(int i=3; i < 6; i++){
+              AddPreviewBlock(game, i, 0, "orange");
+            }
+            AddPreviewBlock(game, 3, -1, "orange");
+            break;
+          case Piece.O:
+            for(int i=4; i < 6; i++){
+              AddPreviewBlock(game, i, 0, "yellow");
+              AddPreviewBlock(game, i, -1, "yellow");
+            }
+            break;
+          case Piece.T:
+            for(int i=3; i < 6; i++){
+              AddPreviewBlock(game, i, 0, "cyan");
+            }
+            AddPreviewBlock(game, 4, -1, "cyan");
+            break;
+        }
+
+        previewPiece = piece.name;
+      }
     }
   }
 }
