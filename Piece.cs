@@ -15,6 +15,7 @@ namespace Godtris{
     private List<Block> _blocks;
     private List<Block> _current;
     private string _name;
+    private bool _rendered=false;
 
     public string name{
       get{
@@ -50,13 +51,19 @@ namespace Godtris{
       }
     }
 
+    public bool rendered{
+      get{
+        return _rendered;
+      }
+    }
+
     public Piece(string name, List<Block> blocks){
       _blocks = blocks;
       _current = new List<Block>();
       _name = name;
     }
 
-    public void Render(){
+    public void Render(bool visible=true){
       switch(_name){
         case Piece.I:
           _color = "red";
@@ -66,7 +73,7 @@ namespace Godtris{
             xxxxxxxxxx
           */
           for(int i=3; i < 7; i++){
-            AddBlock(i, 19, _color);
+            AddBlock(i, Game.GRID_HEIGHT-1, _color, visible);
           }
           break;
         case Piece.Z:
@@ -77,10 +84,10 @@ namespace Godtris{
             xxxxxxxxxx
           */
           for(int i=3; i < 5; i++){
-            AddBlock(i, 19, _color);
+            AddBlock(i, Game.GRID_HEIGHT-1, _color, visible);
           }
           for(int i=4; i < 6; i++){
-            AddBlock(i, 18, _color);
+            AddBlock(i, Game.GRID_HEIGHT-2, _color, visible);
           }
           break;
         case Piece.S:
@@ -91,10 +98,10 @@ namespace Godtris{
             xxxxxxxxxx
           */
           for(int i=4; i < 6; i++){
-            AddBlock(i, 19, _color);
+            AddBlock(i, Game.GRID_HEIGHT-1, _color, visible);
           }
           for(int i=3; i < 5; i++){
-            AddBlock(i, 18, _color);
+            AddBlock(i, Game.GRID_HEIGHT-2, _color, visible);
           }
           break;
         case Piece.J:
@@ -105,9 +112,9 @@ namespace Godtris{
             xxxxxxxxxx
           */
           for(int i=3; i < 6; i++){
-            AddBlock(i, 19, _color);
+            AddBlock(i, Game.GRID_HEIGHT-1, _color, visible);
           }
-          AddBlock(5, 18, _color);
+          AddBlock(5, Game.GRID_HEIGHT-2, _color, visible);
           break;
         case Piece.L:
           _color = "orange";
@@ -117,9 +124,9 @@ namespace Godtris{
             xxxxxxxxxx
           */
           for(int i=3; i < 6; i++){
-            AddBlock(i, 19, _color);
+            AddBlock(i, Game.GRID_HEIGHT-1, _color, visible);
           }
-          AddBlock(3, 18, _color);
+          AddBlock(3, Game.GRID_HEIGHT-2, _color, visible);
           break;
         case Piece.O:
           _color = "yellow";
@@ -129,8 +136,8 @@ namespace Godtris{
             xxxxxxxxxx
           */
           for(int i=4; i < 6; i++){
-            AddBlock(i, 19, _color);
-            AddBlock(i, 18, _color);
+            AddBlock(i, Game.GRID_HEIGHT-1, _color, visible);
+            AddBlock(i, Game.GRID_HEIGHT-2, _color, visible);
           }
           break;
         case Piece.T:
@@ -141,11 +148,13 @@ namespace Godtris{
             xxxxxxxxxx
           */
           for(int i=3; i < 6; i++){
-            AddBlock(i, 19, _color);
+            AddBlock(i, Game.GRID_HEIGHT-1, _color, visible);
           }
-          AddBlock(4, 18, _color);
+          AddBlock(4, Game.GRID_HEIGHT-2, _color, visible);
           break;
       }
+
+      _rendered = true;
     }
 
     private bool Move(int xOffset, int yOffset){
@@ -196,10 +205,11 @@ namespace Godtris{
       return "Piece "+blocks;
     }
 
-    private void AddBlock(int x, int y, string color){
+    private void AddBlock(int x, int y, string color, bool visible){
       Block b = _blocks.Find(block => block.x == x && block.y == y);
       b.color = color;
       b.empty = false;
+      b.visible = visible;
       _current.Add(b);
     }
   }

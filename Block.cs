@@ -62,6 +62,17 @@ namespace Godtris{
       }
     }
 
+    public bool visible{
+      set{
+        if(value){
+          _block.Show();
+        }
+        else{
+          _block.Hide();
+        }
+      }
+    }
+
     public void Render(){
       color = _color;
     }

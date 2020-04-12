@@ -71,7 +71,7 @@ namespace Godtris{
       }
 
       //START
-      RenderNextPiece(true);
+      StartARE();
     }
 
     public override Level GetLevel(int level){
@@ -108,12 +108,23 @@ namespace Godtris{
     public override void RotatePiece(string actionId){
       Piece piece = GetCurrentPiece();
       List<Block> rotatedBlocks = null;
-      if(piece!=null && !piece.locked){
+      if(piece!=null){
+        if(piece.locked || piece.name == Piece.EMPTY){
+          piece = GetNextPiece();
+          if(piece==null){
+            return;
+          }
+          if(!piece.rendered){
+            piece.Render(false);
+          }
+        }
+
         rotatedBlocks = actionId == Controls.ROTATE_LEFT_ACTION_ID ? TGMRotation.RotateLeft(_blocks, piece) : TGMRotation.RotateRight(_blocks, piece);
         
         if(rotatedBlocks!=null){
           foreach(Block block in piece.GetBlocks()){
             block.empty = true;
+            block.visible = true;
           }
           foreach(Block block in rotatedBlocks){
             block.color = piece.color;

@@ -22,6 +22,8 @@ namespace Godtris{
     protected List<Spatial> previewBlocks;
     protected string previewPiece;
 
+    protected bool _firstPiece = true;
+
     public Mode(List<Block> blocks){
       this._blocks = blocks;
       this._history = new List<Piece>();
@@ -93,30 +95,38 @@ namespace Godtris{
       }
     }
 
-    private void StartARE(){
+    protected void StartARE(){
       if(_level.are > 0){
         _waitForARE = true;
         _count2 = 0;
       }
     }
 
-    protected void RenderNextPiece(bool first=false){
+    protected void RenderNextPiece(){
       if(_history.Count > 0){
-        if(!first){
+        if(!_firstPiece){
           _history.RemoveAt(0);
         }
         Piece next = GetCurrentPiece();
         if(next!=null){
-          next.Render();
+          if(!next.rendered){
+            next.Render();
+          }
+          else{
+            foreach(Block block in next.GetBlocks()){
+              block.visible = true;
+            }
+          }
         }
-      }   
+        _firstPiece = false;
+      }
     }
 
     protected Piece GetCurrentPiece(){
       return _history.Count > 0 ? _history[0] : null;
     }
 
-    private Piece GetNextPiece(){
+    protected Piece GetNextPiece(){
       return _history.Count > 1 ? _history[1] : null;
     }
 
