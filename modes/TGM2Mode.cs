@@ -59,8 +59,8 @@ namespace Godtris{
 
       //DEBUG CODE
       _history.Add(new Piece(Piece.EMPTY, this._blocks));
-      
-      for(int i=0; i < 2; i++){
+
+      for(int i=0; i < 3; i++){
         _history.Add(new Piece(Piece.I, this._blocks));
         _history.Add(new Piece(Piece.Z, this._blocks));
         _history.Add(new Piece(Piece.S, this._blocks));
@@ -103,6 +103,25 @@ namespace Godtris{
       #if (DEBUG)
         GD.Print("SetLevel "+_level.level+" "+_level.gravity+" "+_level.are+" "+_level.das+" "+_level.lockDelay+" "+_level.lineClear);
       #endif
+    }
+
+    public override void RotatePiece(string actionId){
+      Piece piece = GetCurrentPiece();
+      List<Block> rotatedBlocks = null;
+      if(piece!=null && !piece.locked){
+        rotatedBlocks = actionId == Controls.ROTATE_LEFT_ACTION_ID ? TGMRotation.RotateLeft(_blocks, piece) : TGMRotation.RotateRight(_blocks, piece);
+        
+        if(rotatedBlocks!=null){
+          foreach(Block block in piece.GetBlocks()){
+            block.empty = true;
+          }
+          foreach(Block block in rotatedBlocks){
+            block.color = piece.color;
+            block.empty = false;
+          }
+          piece.SetBlocks(rotatedBlocks);
+        }
+      }
     }
 
     private int[] GetTimings(int level){

@@ -21,8 +21,21 @@ namespace Godtris{
         return _name;
       }
     }
+
+    public string color{
+      get{
+        return _color;
+      }
+    }
+
+    public int rotation_state = 0;
+
     public List<Block> GetBlocks(){
       return _current;
+    }
+
+    public void SetBlocks(List<Block> blocks){
+      _current = blocks;
     }
 
     public bool locked{

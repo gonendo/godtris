@@ -4,6 +4,8 @@ using System.Collections.Generic;
 namespace Godtris{
 	public class Game : Spatial
 	{
+		public const int GRID_WIDTH = 10;
+		public const int GRID_HEIGHT = 20;
 		public Position3D tetrionBottomLeft;
 		public Vector3 tetrionBottomLeftPosition;
 		private List<Block> _blocks;
@@ -17,8 +19,8 @@ namespace Godtris{
 			tetrionBottomLeft = GetNode("Tetrion/BottomLeft") as Position3D;
 			tetrionBottomLeftPosition = tetrionBottomLeft.ToGlobal(tetrionBottomLeft.Transform.origin);
 			_blocks = new List<Block>();
-			for(int i=0; i < 10; i++){
-				for(int j=0; j < 20; j++){
+			for(int i=0; i < GRID_WIDTH; i++){
+				for(int j=0; j < GRID_HEIGHT+1; j++){
 					_blocks.Add(new Block(i, j, this));
 				}
 			}
@@ -44,7 +46,7 @@ namespace Godtris{
 		}
 
 		private void StartTGM2(){
-			mode = new TGM2Mode(_blocks, 0);
+			mode = new TGM2Mode(_blocks, 500);
 			controls = new Controls(mode);
 			_started = true;
 		} 

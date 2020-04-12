@@ -8,12 +8,18 @@ namespace Godtris{
     private Spatial _block;
     private bool _empty;
     private bool _locked;
+    private bool _offgrid;
 
     public Block(int x, int y, Game game){
       this.x = x;
       this.y = y;
       this._game = game;
       this._block = Godtris.Utils.GetBlock(Color.ColorN("black"));
+      if(y >= Game.GRID_HEIGHT){
+        this._block.Hide();
+        _offgrid = true;
+        _empty = true;
+      }
       this.empty = true;
       this._block.Translate(new Vector3(
       this._game.tetrionBottomLeftPosition.x + this.x * Godtris.Utils.BLOCK_SIZE, 
@@ -27,12 +33,22 @@ namespace Godtris{
         return _color;
       }
       set{
-        MeshInstance mesh = _block.GetNode("MeshInstance") as MeshInstance;
-        SpatialMaterial material = mesh.GetSurfaceMaterial(0) as SpatialMaterial;
-        _color = value;
-        material.AlbedoColor = Color.ColorN(_color);
-        if(_locked){
-          material.AlbedoColor = material.AlbedoColor.Darkened(0.5f);
+        if(_block!=null){
+          MeshInstance mesh = _block.GetNode("MeshInstance") as MeshInstance;
+          SpatialMaterial material = mesh.GetSurfaceMaterial(0) as SpatialMaterial;
+          if(_offgrid){
+            if(!empty){
+              this._block.Show();
+            }
+            else{
+              this._block.Hide();
+            }
+          }
+          _color = value;
+          material.AlbedoColor = Color.ColorN(_color);
+          if(_locked){
+            material.AlbedoColor = material.AlbedoColor.Darkened(0.5f);
+          }
         }
       }
     }

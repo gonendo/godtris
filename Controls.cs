@@ -27,6 +27,12 @@ namespace Godtris{
       else if(Input.IsActionJustPressed(HARD_DROP_ACTION_ID)){
         _mode.MovePiece(HARD_DROP_ACTION_ID);
       }
+      if(Input.IsActionJustPressed(ROTATE_LEFT_ACTION_ID)){
+        _mode.RotatePiece(ROTATE_LEFT_ACTION_ID);
+      }
+      else if(Input.IsActionJustPressed(ROTATE_RIGHT_ACTION_ID)){
+        _mode.RotatePiece(ROTATE_RIGHT_ACTION_ID);
+      }
     }
   }
 }

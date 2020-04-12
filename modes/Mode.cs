@@ -109,7 +109,7 @@ namespace Godtris{
       }   
     }
 
-    private Piece GetCurrentPiece(){
+    protected Piece GetCurrentPiece(){
       return _history.Count > 0 ? _history[0] : null;
     }
 
@@ -147,6 +147,10 @@ namespace Godtris{
           StartDAS();
         }
       }
+    }
+
+    public virtual void RotatePiece(string actionId){
+
     }
 
     public virtual Level GetLevel(int level){
