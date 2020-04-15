@@ -2,11 +2,11 @@ using Godot;
 namespace Godtris{
   public static class Utils{
     public const float BLOCK_SIZE = 0.2f;
+    private static PackedScene scene = ResourceLoader.Load<PackedScene>("res://Block.tscn");
 
     ///<summary>gets a colored block spatial</summary>
     ///<param name="color">Godot Color instance</param>
-    public static Spatial GetBlock(Color color){
-      PackedScene scene = ResourceLoader.Load<PackedScene>("res://Block.tscn");
+    public static Spatial GetBlock(Color color){ 
       Spatial block = scene.Instance() as Spatial;
       MeshInstance mesh = block.GetNode("MeshInstance") as MeshInstance;
       SpatialMaterial material = new SpatialMaterial();

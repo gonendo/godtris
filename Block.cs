@@ -63,6 +63,9 @@ namespace Godtris{
     }
 
     public bool visible{
+      get{
+        return _block.Visible;
+      }
       set{
         if(value){
           _block.Show();

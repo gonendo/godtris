@@ -60,7 +60,7 @@ namespace Godtris{
       //DEBUG CODE
       _history.Add(new Piece(Piece.EMPTY, this._blocks));
 
-      for(int i=0; i < 3; i++){
+      for(int i=0; i < 50; i++){
         _history.Add(new Piece(Piece.I, this._blocks));
         _history.Add(new Piece(Piece.Z, this._blocks));
         _history.Add(new Piece(Piece.S, this._blocks));
@@ -108,7 +108,7 @@ namespace Godtris{
     public override void RotatePiece(string actionId){
       Piece piece = GetCurrentPiece();
       List<Block> rotatedBlocks = null;
-      if(piece!=null){
+      if(piece!=null && !_waitForLineClear){
         if(piece.locked || piece.name == Piece.EMPTY){
           piece = GetNextPiece();
           if(piece==null){
@@ -127,9 +127,12 @@ namespace Godtris{
             block.visible = true;
           }
           foreach(Block block in rotatedBlocks){
-            block.color = piece.color;
-            block.empty = false;
+            if(piece == GetCurrentPiece()){
+              block.color = piece.color;
+              block.empty = false;
+            }
           }
+          
           piece.SetBlocks(rotatedBlocks);
         }
       }

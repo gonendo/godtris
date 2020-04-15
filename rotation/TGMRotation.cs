@@ -34,7 +34,6 @@ namespace Godtris{
     private static int[] L_state_1_R = {-1, 1, 0, 0, 1, -1, -2, 0};
 
     public static List<Block> RotateLeft(List<Block> blocks, Piece piece){
-      GD.Print("RotateLeft "+piece);
       switch(piece.name){
         case Piece.I:
           return ChangeState(blocks, piece, piece.rotation_state == 0 ? I_state_1 : I_state_0, piece.rotation_state == 0 ? 1 : 0);
@@ -114,7 +113,6 @@ namespace Godtris{
     }
 
     public static List<Block> RotateRight(List<Block> blocks, Piece piece){
-      GD.Print("RotateRight "+piece);
       switch(piece.name){
         case Piece.I:
           return ChangeState(blocks, piece, piece.rotation_state == 0 ? I_state_1 : I_state_0, piece.rotation_state == 0 ? 1 : 0);
@@ -204,7 +202,6 @@ namespace Godtris{
 
         Block newBlock = blocks.Find(b => b.x == block_x && b.y == block_y);
         if(newBlock==null || (!newBlock.empty && piece.GetBlocks().IndexOf(newBlock)==-1)){
-          GD.Print("rotation fail, trying wall kick to the right");
           fail = true;
           break;
         }
@@ -223,7 +220,6 @@ namespace Godtris{
 
           Block newBlock = blocks.Find(b => b.x == block_x && b.y == block_y);
           if(newBlock==null || (!newBlock.empty && piece.GetBlocks().IndexOf(newBlock)==-1)){
-            GD.Print("rotation fail, trying wall kick to the left");
             fail = true;
             break;
           }
@@ -242,7 +238,6 @@ namespace Godtris{
 
           Block newBlock = blocks.Find(b => b.x == block_x && b.y == block_y);
           if(newBlock==null || (!newBlock.empty && piece.GetBlocks().IndexOf(newBlock)==-1)){
-            GD.Print("rotation fail");
             fail = true;
             break;
           }

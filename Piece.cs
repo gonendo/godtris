@@ -16,6 +16,7 @@ namespace Godtris{
     private List<Block> _current;
     private string _name;
     private bool _rendered=false;
+    private bool _visible=false;
 
     public string name{
       get{
@@ -26,6 +27,15 @@ namespace Godtris{
     public string color{
       get{
         return _color;
+      }
+    }
+
+    public bool visible{
+      get{
+        return _visible;
+      }
+      set{
+        _visible = value;
       }
     }
 
@@ -64,6 +74,8 @@ namespace Godtris{
     }
 
     public void Render(bool visible=true){
+      _visible = visible;
+
       switch(_name){
         case Piece.I:
           _color = "red";
@@ -175,11 +187,15 @@ namespace Godtris{
       foreach(Block block in _current){
         if(newBlocks.IndexOf(block)==-1){
           block.empty = true;
+          block.visible = true;
         }
         Block nb = _blocks.Find(b => b.x == block.x+xOffset && b.y == block.y+yOffset);
         if (nb!=null){
-          nb.color = _color;
-          nb.empty = false;
+          if(_visible){
+            nb.color = _color;
+            nb.empty = false;
+            nb.locked = locked;
+          }
           newBlocks.Add(nb);
         }
       }
@@ -207,9 +223,11 @@ namespace Godtris{
 
     private void AddBlock(int x, int y, string color, bool visible){
       Block b = _blocks.Find(block => block.x == x && block.y == y);
-      b.color = color;
+      b.color = !visible && y < Game.GRID_HEIGHT ? "black" : color;
       b.empty = false;
-      b.visible = visible;
+      if(b.color!="black"){
+        b.visible = visible;
+      }
       _current.Add(b);
     }
   }

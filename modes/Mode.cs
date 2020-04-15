@@ -9,6 +9,7 @@ namespace Godtris{
     protected float _count2 = 0; //counter for entry delay
     protected float _count3 = 0; //counter for lock delay
     protected float _count4 = 0; //counter for das
+    protected float _count5 = 0; //counter for line clear
 
     protected Level _level;
     protected List<Piece> _history;
@@ -16,6 +17,7 @@ namespace Godtris{
     protected bool _waitForARE = false;
     protected bool _waitForLockDelay = false;
     protected bool _waitForDAS = false;
+    protected bool _waitForLineClear = false;
     
     protected bool _autoShift = false;
 
@@ -23,10 +25,12 @@ namespace Godtris{
     protected string previewPiece;
 
     protected bool _firstPiece = true;
+    protected List<int> _clearedLines;
 
     public Mode(List<Block> blocks){
       this._blocks = blocks;
       this._history = new List<Piece>();
+      _clearedLines = new List<int>();
     }
 
     public void Update(){
@@ -34,6 +38,7 @@ namespace Godtris{
       _count2++;
       _count3++;
       _count4++;
+      _count5++;
 
       if(Input.IsActionJustReleased(Controls.LEFT_ACTION_ID) || 
         Input.IsActionJustReleased(Controls.RIGHT_ACTION_ID) || 
@@ -51,36 +56,47 @@ namespace Godtris{
         _waitForDAS = false;
         _autoShift= true;
       }
-
+      
       if(_waitForLockDelay && (_count3 >= _level.lockDelay)){
         _waitForLockDelay = false;
         GetCurrentPiece().locked = true;
+        if(CheckLines()){
+          StartLineClear();
+        }
       }
 
       if(_waitForARE && _count2 >= _level.are){
         _waitForARE = false;
-        _waitForLockDelay = false;
-        _waitForDAS = false;
         RenderNextPiece();
+      }
+
+      if(_waitForLineClear && _count5 >= _level.lineClear){
+        _waitForLineClear = false;
+        StartARE();
       }
 
       if(_count >= 1){
         for(int i=0; i < _count; i++){
           piece = GetCurrentPiece();
-          if(piece!=null){
+          if(piece!=null && !_waitForLineClear && !_waitForARE){
             if(!piece.MoveDown()){
               if(!piece.locked){
                 if(!_waitForLockDelay){
-                  _count3 = 0;
+                  StartLockDelay();
                 }
-                _waitForLockDelay = true;
               }
-              else if(!_waitForARE){
+              else if(!_waitForLockDelay){
                 StartARE();
               }
             }
-            else{
-              _waitForLockDelay = false;
+            else if(piece.locked){
+              for(int j=0; j < 20; j++){
+                piece.MoveDown();
+              }
+              if(CheckLines()){
+                StartLineClear();
+              }
+              break;
             }
           }
         }
@@ -90,15 +106,29 @@ namespace Godtris{
 
     private void StartDAS(){
       if(_level.das > 0){
-        _waitForDAS = true;
         _count4 = 0;
+        _waitForDAS = true;
       }
     }
 
     protected void StartARE(){
       if(_level.are > 0){
-        _waitForARE = true;
         _count2 = 0;
+        _waitForARE = true;
+      }
+    }
+
+    protected void StartLineClear(){
+      if(_level.lineClear > 0){
+        _count5 = 0;
+        _waitForLineClear = true;
+      }
+    }
+
+    protected void StartLockDelay(){
+      if(_level.lockDelay > 0){
+        _count3 = 0;
+        _waitForLockDelay = true;
       }
     }
 
@@ -114,8 +144,11 @@ namespace Godtris{
           }
           else{
             foreach(Block block in next.GetBlocks()){
+              block.color = next.color;
               block.visible = true;
+              block.locked = false;
             }
+            next.visible = true;
           }
         }
         _firstPiece = false;
@@ -131,7 +164,7 @@ namespace Godtris{
     }
 
     public void MovePiece(string actionId){
-      if(_waitForDAS){
+      if(_waitForDAS || _waitForLineClear){
         return;
       }
 
@@ -147,7 +180,6 @@ namespace Godtris{
             break;
           case Controls.SOFT_DROP_ACTION_ID:
             if(!p.MoveDown()){
-              _waitForLockDelay = false;
               p.locked = true;
             }
             break;
@@ -246,6 +278,58 @@ namespace Godtris{
 
         previewPiece = piece.name;
       }
+    }
+
+    protected bool CheckLines(){
+      _clearedLines.Clear();
+      int minClearedLineIndex = -1;
+      for(int i=0; i < Game.GRID_HEIGHT; i++){
+        int filled = 0;
+        foreach(Block block in _blocks){
+          if(block.y==i && !block.empty){
+            filled++;
+          }
+        }
+        if(filled == Game.GRID_WIDTH){
+          _clearedLines.Add(i);
+          if(minClearedLineIndex == -1){
+            minClearedLineIndex = i;
+          }
+          else{
+            minClearedLineIndex = Mathf.Min(i, minClearedLineIndex);
+          }
+        }
+      }
+      foreach(int lineIndex in _clearedLines){
+        foreach(Block block in _blocks){
+          if(block.y == lineIndex){
+            block.empty = true;
+          }
+        }
+      }
+
+      if(_clearedLines.Count > 0){
+        for(int i=0; i < _clearedLines.Count; i++){
+          for(int j=1; j < Game.GRID_HEIGHT; j++){
+            if(j > minClearedLineIndex){
+              foreach(Block block in _blocks){
+                if(!block.empty && block.y == j){
+                  Block blockBelow = _blocks.Find(b => b.y == j-1 && b.x == block.x);
+                  blockBelow.color = block.color;
+                  blockBelow.empty = false;
+                  blockBelow.locked = true;
+                  block.empty = true;
+                  block.locked = false;
+                }
+              }
+            }
+          }
+        }
+
+        return true;
+      }
+      
+      return false;
     }
   }
 }

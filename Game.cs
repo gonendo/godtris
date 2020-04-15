@@ -41,9 +41,9 @@ namespace Godtris{
 		public override void _PhysicsProcess(float delta)
 		{
 			if(_started){
+				controls.Update();
 				mode.RenderPreview(this);
 				mode.Update();
-				controls.Update();
 				foreach(Block block in _blocks){
 					block.Render();
 				}
@@ -51,7 +51,7 @@ namespace Godtris{
 		}
 
 		private void StartTGM2(){
-			mode = new TGM2Mode(_blocks, 500);
+			mode = new TGM2Mode(_blocks, 300);
 			controls = new Controls(mode);
 			_started = true;
 		}
