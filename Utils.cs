@@ -12,11 +12,7 @@ namespace Godtris{
       SpatialMaterial material = new SpatialMaterial();
       material.AlbedoColor = color;
       material.Uv1Scale = new Vector3(3, 2, 1);
-      Image image = new Image();
-      image.Load("res://assets/block.png");
-      ImageTexture tx = new ImageTexture();
-      tx.CreateFromImage(image);
-      material.AlbedoTexture = tx;
+      material.AlbedoTexture = GD.Load("res://assets/block.png") as Texture;
       mesh.SetSurfaceMaterial(0, material);
       return block;
     }
