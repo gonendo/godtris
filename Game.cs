@@ -13,6 +13,7 @@ namespace Godtris{
 		public Mode mode;
 		public Controls controls;
 		private bool _started = false;
+		private bool _gameover = false;
 
 		public async override void _Ready()
 		{
@@ -40,7 +41,7 @@ namespace Godtris{
 		}
 		public override void _PhysicsProcess(float delta)
 		{
-			if(_started){
+			if(_started && !_gameover){
 				controls.Update();
 				mode.RenderPreview(this);
 				mode.Update();
@@ -50,8 +51,32 @@ namespace Godtris{
 			}
 		}
 
+		public async void GameOver(){
+			GD.Print("Game Over");
+			_gameover = true;
+			Timer t = new Timer();
+			t.WaitTime = 0.2f;
+			AddChild(t);
+			for(int i=0; i <= GRID_HEIGHT; i++){
+				t.Stop();
+				t.Start();
+				await ToSignal(t, "timeout");
+				for(int j=0; j < GRID_WIDTH; j++){
+					Block blockBelow = _blocks.Find(b => b.x == j && b.y == i-1);
+					if(blockBelow!=null){
+						blockBelow.empty = true;
+					}
+					Block block = _blocks.Find(b => b.x == j && b.y == i);
+					if(!block.empty){
+						block.Lighten();
+					}
+				}
+			}
+			t.QueueFree();
+		}
+
 		private void StartTGM2(){
-			mode = new TGM2Mode(_blocks, 300);
+			mode = new TGM2Mode(this, _blocks, 300);
 			controls = new Controls(mode);
 			_started = true;
 		}

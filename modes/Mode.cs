@@ -27,7 +27,10 @@ namespace Godtris{
     protected bool _firstPiece = true;
     protected List<int> _clearedLines;
 
-    public Mode(List<Block> blocks){
+    protected Game _game;
+
+    public Mode(Game game, List<Block> blocks){
+      this._game = game;
       this._blocks = blocks;
       this._history = new List<Piece>();
       _clearedLines = new List<int>();
@@ -139,6 +142,12 @@ namespace Godtris{
         }
         Piece next = GetCurrentPiece();
         if(next!=null){
+          List<Block> topRowBlocks = new List<Block>();
+          foreach(Block block in _blocks){
+            if(block.y == Game.GRID_HEIGHT-1 && !block.empty){
+              topRowBlocks.Add(new Block(block.x, block.y, false));
+            }
+          }
           if(!next.rendered){
             next.Render();
           }
@@ -155,6 +164,17 @@ namespace Godtris{
             }
             next.SetBlocks(newBlocks);
             next.visible = true;
+          }
+
+          //checking game over
+          foreach(Block block in next.GetBlocks()){
+            foreach(Block topRowBlock in topRowBlocks){
+              if((block.x == topRowBlock.x) && (block.y == topRowBlock.y)){
+                next.locked = true;
+                _game.GameOver();
+                return;
+              }
+            }
           }
         }
         _firstPiece = false;
@@ -309,7 +329,7 @@ namespace Godtris{
       foreach(int lineIndex in _clearedLines){
         foreach(Block block in _blocks){
           if(block.y == lineIndex){
-            block.clear();
+            block.Clear();
             block.empty = true;
           }
         }

@@ -12,7 +12,7 @@ namespace Godtris{
     private const int LOCK_TIMINGS_INDEX = 2;
     private const int LINECLEAR_TIMINGS_INDEX = 3;
 
-    public TGM2Mode(List<Block> blocks, int level) : base(blocks){
+    public TGM2Mode(Game game, List<Block> blocks, int level) : base(game, blocks){
       _timings = new Dictionary<int[], int[]>();
 
       //MASTER MODE

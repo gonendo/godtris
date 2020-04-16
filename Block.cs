@@ -28,6 +28,12 @@ namespace Godtris{
       this._game.AddChild(this._block);
     }
 
+    public Block(int x, int y, bool empty){
+      this.x = x;
+      this.y = y;
+      _empty = empty;
+    }
+
     public string color{
       get{
         return _color;
@@ -53,7 +59,13 @@ namespace Godtris{
       }
     }
 
-    public void clear(){
+    public void Lighten(){
+      MeshInstance mesh = _block.GetNode("MeshInstance") as MeshInstance;
+      SpatialMaterial material = mesh.GetSurfaceMaterial(0) as SpatialMaterial;
+      material.AlbedoColor = material.AlbedoColor.Darkened(-0.5f);
+    }
+
+    public void Clear(){
       Particles particles = _block.GetNode("Particles") as Particles;
       CubeMesh cube = new CubeMesh();
       cube.Size = new Vector3(0.15f, 0.15f, 0.15f);
