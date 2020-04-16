@@ -181,11 +181,11 @@ namespace Godtris{
       }
     }
 
-    protected Piece GetCurrentPiece(){
+    protected virtual Piece GetCurrentPiece(){
       return _history.Count > 0 ? _history[0] : null;
     }
 
-    protected Piece GetNextPiece(){
+    protected virtual Piece GetNextPiece(){
       return _history.Count > 1 ? _history[1] : null;
     }
 

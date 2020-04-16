@@ -12,6 +12,8 @@ namespace Godtris{
     private const int LOCK_TIMINGS_INDEX = 2;
     private const int LINECLEAR_TIMINGS_INDEX = 3;
 
+    private TGMRandomizer _randomizer;
+
     public TGM2Mode(Game game, List<Block> blocks, int level) : base(game, blocks){
       _timings = new Dictionary<int[], int[]>();
 
@@ -57,18 +59,8 @@ namespace Godtris{
 
       SetLevel(level);
 
-      //DEBUG CODE
+      _randomizer = new TGMRandomizer(_blocks);
       _history.Add(new Piece(Piece.EMPTY, this._blocks));
-
-      for(int i=0; i < 50; i++){
-        _history.Add(new Piece(Piece.I, this._blocks));
-        _history.Add(new Piece(Piece.Z, this._blocks));
-        _history.Add(new Piece(Piece.S, this._blocks));
-        _history.Add(new Piece(Piece.J, this._blocks));
-        _history.Add(new Piece(Piece.L, this._blocks));
-        _history.Add(new Piece(Piece.O, this._blocks));
-        _history.Add(new Piece(Piece.T, this._blocks));
-      }
 
       //START
       StartARE();
@@ -147,6 +139,26 @@ namespace Godtris{
         }
       }
       return timings;
+    }
+
+    protected override Piece GetCurrentPiece(){
+      if(_history.Count>0){
+        return _history[0];
+      }
+      else{
+        _history.Insert(0, _randomizer.GetNextPiece());
+        return _history[0];
+      }
+    }
+
+    protected override Piece GetNextPiece(){
+      if(_history.Count>1){
+        return _history[1];
+      }
+      else{
+        _history.Add(_randomizer.GetNextPiece());
+        return _history[1];
+      }
     }
   }
 }
