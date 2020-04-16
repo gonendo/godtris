@@ -7,6 +7,7 @@ namespace Godtris{
     public const string ROTATE_RIGHT_ACTION_ID = "rotate_right";
     public const string SOFT_DROP_ACTION_ID = "soft_drop";
     public const string HARD_DROP_ACTION_ID = "hard_drop";
+    public const string RESTART_ACTION_ID = "restart";
     
     private Mode _mode;
 

@@ -245,6 +245,15 @@ namespace Godtris{
       previewBlocks.Add(block);
     }
 
+    public void DestroyPreview(Game game){
+      if(previewBlocks!=null){
+        foreach(Spatial block in previewBlocks){
+          block.QueueFree();
+        }
+        previewBlocks.Clear();
+      }
+    }
+
     public virtual void RenderPreview(Game game){
       Piece piece = GetNextPiece();
       if(piece!=null && previewPiece!=piece.name){

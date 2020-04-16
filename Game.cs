@@ -15,7 +15,7 @@ namespace Godtris{
 		private bool _started = false;
 		private bool _gameover = false;
 
-		public async override void _Ready()
+		public override void _Ready()
 		{
 			GD.Print("Game ready");
 			tetrionBottomLeft = GetNode("Tetrion/BottomLeft") as Position3D;
@@ -23,24 +23,14 @@ namespace Godtris{
 
 			previewPosition = GetNode("PreviewPosition") as Position3D;
 
-			_blocks = new List<Block>();
-			for(int i=0; i < GRID_WIDTH; i++){
-				for(int j=0; j < GRID_HEIGHT+4; j++){
-					_blocks.Add(new Block(i, j, this));
-				}
-			}
-
-			Timer t = new Timer();
-			t.OneShot = true;
-			t.WaitTime = 1;
-			t.Autostart = true;
-			AddChild(t);
-			await ToSignal(t, "timeout");
-			t.QueueFree();
-			StartTGM2();
+			StartMode();
 		}
+
 		public override void _PhysicsProcess(float delta)
 		{
+			if(!_gameover && Input.IsActionJustPressed(Controls.RESTART_ACTION_ID)){
+				StartMode();
+			}
 			if(_started && !_gameover){
 				controls.Update();
 				mode.RenderPreview(this);
@@ -49,6 +39,33 @@ namespace Godtris{
 					block.Render();
 				}
 			}
+		}
+
+		private async void StartMode(){
+			_started = false;
+			_gameover = false;
+			if(_blocks!=null){
+				foreach(Block block in _blocks){
+					block.Destroy();
+				}
+			}
+			_blocks = new List<Block>();
+			for(int i=0; i < GRID_WIDTH; i++){
+				for(int j=0; j < GRID_HEIGHT+4; j++){
+					_blocks.Add(new Block(i, j, this));
+				}
+			}
+			if(mode!=null){
+				mode.DestroyPreview(this);
+			}
+			Timer t = new Timer();
+			t.OneShot = true;
+			t.WaitTime = 1;
+			t.Autostart = true;
+			AddChild(t);
+			await ToSignal(t, "timeout");
+			t.QueueFree();
+			StartTGM2();
 		}
 
 		public async void GameOver(){
@@ -78,6 +95,8 @@ namespace Godtris{
 				}
 			}
 			t.QueueFree();
+			_started = false;
+			_gameover = false;
 		}
 
 		private void StartTGM2(){

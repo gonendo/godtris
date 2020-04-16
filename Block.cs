@@ -116,5 +116,9 @@ namespace Godtris{
         _empty = value;
       }
     }
+
+    public void Destroy(){
+      _block.QueueFree();
+    }
   }
 }
