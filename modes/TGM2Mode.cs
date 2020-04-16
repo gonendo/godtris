@@ -57,6 +57,7 @@ namespace Godtris{
       _gravities.Add(450, 768); // 3G
       _gravities.Add(500, 5120); // 20G
 
+      _maxLevel = 999;
       SetLevel(level);
 
       _randomizer = new TGMRandomizer(_blocks);
@@ -92,9 +93,6 @@ namespace Godtris{
 
     public override void SetLevel(int level){
       _level = GetLevel(level);
-      #if (DEBUG)
-        GD.Print("SetLevel "+_level.level+" "+_level.gravity+" "+_level.are+" "+_level.das+" "+_level.lockDelay+" "+_level.lineClear);
-      #endif
     }
 
     public override void RotatePiece(string actionId){

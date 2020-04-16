@@ -101,8 +101,14 @@ namespace Godtris{
 			_gameover = false;
 		}
 
+		public void SetLevel(int level){
+			RichTextLabel label = GetNode("Viewport/Level") as RichTextLabel;
+			int lvl = Mathf.Min(level, mode.maxLevel);
+			label.BbcodeText = string.Format("[color=#ffff00]LEVEL[/color]\n [u]{0}[/u]\n {1}", string.Format("{0:D3}", lvl), mode.maxLevel);
+		}
+
 		private void StartTGM2(){
-			mode = new TGM2Mode(this, _blocks, 300);
+			mode = new TGM2Mode(this, _blocks, 0);
 			controls = new Controls(mode);
 			_started = true;
 			_starting = false;

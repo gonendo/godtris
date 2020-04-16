@@ -12,6 +12,7 @@ namespace Godtris{
     protected float _count5 = 0; //counter for line clear
 
     protected Level _level;
+    protected int _maxLevel;
     protected List<Piece> _history;
 
     protected bool _waitForARE = false;
@@ -174,6 +175,16 @@ namespace Godtris{
                 _game.GameOver();
                 return;
               }
+            }
+          }
+
+          //increase level
+          if(next.name != Piece.EMPTY){
+            if(string.Format("{0:D3}", _level.level).Substr(1, 2)!="99"){
+              int newLevel = _level.level + 1;
+              newLevel = Mathf.Min(newLevel, _maxLevel);
+              SetLevel(newLevel);
+              _game.SetLevel(newLevel);
             }
           }
         }
@@ -362,10 +373,20 @@ namespace Godtris{
           }
         }
 
+        int newLevel = _level.level+_clearedLines.Count;
+        SetLevel(newLevel);
+        _game.SetLevel(newLevel);
+        
         return true;
       }
       
       return false;
+    }
+
+    public int maxLevel{
+      get{
+        return _maxLevel;
+      }
     }
   }
 }
