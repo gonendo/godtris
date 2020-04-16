@@ -57,14 +57,19 @@ namespace Godtris{
 			Timer t = new Timer();
 			t.WaitTime = 0.2f;
 			AddChild(t);
-			for(int i=0; i <= GRID_HEIGHT; i++){
+			for(int i=0; i <= GRID_HEIGHT+1; i++){
 				t.Stop();
 				t.Start();
 				await ToSignal(t, "timeout");
 				for(int j=0; j < GRID_WIDTH; j++){
 					Block blockBelow = _blocks.Find(b => b.x == j && b.y == i-1);
 					if(blockBelow!=null){
-						blockBelow.empty = true;
+						if(blockBelow.y < GRID_HEIGHT){
+							blockBelow.empty = true;
+						}
+						else{
+							blockBelow.visible = false;
+						}
 					}
 					Block block = _blocks.Find(b => b.x == j && b.y == i);
 					if(!block.empty){
