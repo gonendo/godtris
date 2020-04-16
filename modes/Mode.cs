@@ -49,7 +49,7 @@ namespace Godtris{
 
       Piece piece = GetCurrentPiece();
       if(piece!=null && piece.name == Piece.EMPTY && !_waitForARE){
-        StartARE();
+        RenderNextPiece();
       }
 
       if(_waitForDAS && (_count4 >= _level.das)){
@@ -143,11 +143,17 @@ namespace Godtris{
             next.Render();
           }
           else{
+            List<Block> newBlocks = new List<Block>();
             foreach(Block block in next.GetBlocks()){
-              block.color = next.color;
-              block.visible = true;
-              block.locked = false;
+              Block blockBelow = _blocks.Find(b => b.x == block.x && b.y == block.y - 3);
+              blockBelow.empty = false;
+              blockBelow.color = next.color;
+              blockBelow.visible = true;
+              blockBelow.locked = false;
+              newBlocks.Add(blockBelow);
+              block.empty = true;
             }
+            next.SetBlocks(newBlocks);
             next.visible = true;
           }
         }
@@ -310,7 +316,7 @@ namespace Godtris{
 
       if(_clearedLines.Count > 0){
         for(int i=0; i < _clearedLines.Count; i++){
-          for(int j=1; j < Game.GRID_HEIGHT; j++){
+          for(int j=1; j < Game.GRID_HEIGHT+4; j++){
             if(j > minClearedLineIndex){
               foreach(Block block in _blocks){
                 if(!block.empty && block.y == j){

@@ -37,7 +37,7 @@ namespace Godtris{
           MeshInstance mesh = _block.GetNode("MeshInstance") as MeshInstance;
           SpatialMaterial material = mesh.GetSurfaceMaterial(0) as SpatialMaterial;
           if(_offgrid){
-            if(!empty){
+            if(!empty && y == Game.GRID_HEIGHT){
               this._block.Show();
             }
             else{

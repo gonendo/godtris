@@ -24,7 +24,7 @@ namespace Godtris{
 
 			_blocks = new List<Block>();
 			for(int i=0; i < GRID_WIDTH; i++){
-				for(int j=0; j < GRID_HEIGHT+1; j++){
+				for(int j=0; j < GRID_HEIGHT+4; j++){
 					_blocks.Add(new Block(i, j, this));
 				}
 			}
