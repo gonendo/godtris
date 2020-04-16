@@ -236,7 +236,7 @@ namespace Godtris{
       if(previewBlocks==null){
         previewBlocks = new List<Spatial>();
       }
-      Spatial block = Godtris.Utils.GetBlock(Color.ColorN(color));
+      Spatial block = Godtris.Utils.GetBlock(Color.ColorN(color), 5);
       block.Translate(new Vector3(
       game.previewPosition.Transform.origin.x + x * Godtris.Utils.BLOCK_SIZE, 
       game.previewPosition.Transform.origin.y + y * Godtris.Utils.BLOCK_SIZE, 
