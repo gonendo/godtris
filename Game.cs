@@ -14,6 +14,7 @@ namespace Godtris{
 		public Controls controls;
 		private bool _started = false;
 		private bool _gameover = false;
+		private bool _starting = false;
 
 		public override void _Ready()
 		{
@@ -28,7 +29,7 @@ namespace Godtris{
 
 		public override void _PhysicsProcess(float delta)
 		{
-			if(!_gameover && Input.IsActionJustPressed(Controls.RESTART_ACTION_ID)){
+			if(!_gameover && !_starting && Input.IsActionJustPressed(Controls.RESTART_ACTION_ID)){
 				StartMode();
 			}
 			if(_started && !_gameover){
@@ -42,6 +43,7 @@ namespace Godtris{
 		}
 
 		private async void StartMode(){
+			_starting = true;
 			_started = false;
 			_gameover = false;
 			if(_blocks!=null){
@@ -103,6 +105,7 @@ namespace Godtris{
 			mode = new TGM2Mode(this, _blocks, 300);
 			controls = new Controls(mode);
 			_started = true;
+			_starting = false;
 		}
 	}
 }
