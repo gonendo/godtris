@@ -309,6 +309,7 @@ namespace Godtris{
       foreach(int lineIndex in _clearedLines){
         foreach(Block block in _blocks){
           if(block.y == lineIndex){
+            block.clear();
             block.empty = true;
           }
         }

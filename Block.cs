@@ -53,6 +53,19 @@ namespace Godtris{
       }
     }
 
+    public void clear(){
+      Particles particles = _block.GetNode("Particles") as Particles;
+      CubeMesh cube = new CubeMesh();
+      cube.Size = new Vector3(0.15f, 0.15f, 0.15f);
+      SpatialMaterial material = new SpatialMaterial();
+      material.AlbedoColor = Color.ColorN(_color);
+      cube.Material = material;
+      particles.DrawPass1 = cube;
+      
+      AnimationPlayer player = _block.GetNode("AnimationPlayer") as AnimationPlayer;
+      player.Play("clear");
+    }
+
     public bool locked{
       get{
         return _locked;
