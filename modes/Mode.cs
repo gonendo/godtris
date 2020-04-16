@@ -144,7 +144,7 @@ namespace Godtris{
         if(next!=null){
           List<Block> topRowBlocks = new List<Block>();
           foreach(Block block in _blocks){
-            if(block.y == Game.GRID_HEIGHT-1 && !block.empty){
+            if(block.y >= Game.GRID_HEIGHT-4 && block.y <= Game.GRID_HEIGHT-1 && !block.empty){
               topRowBlocks.Add(new Block(block.x, block.y, false));
             }
           }
