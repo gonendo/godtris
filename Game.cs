@@ -101,6 +101,11 @@ namespace Godtris{
 			label.BbcodeText = string.Format("[color=#ffff00]LEVEL[/color]\n [u]{0}[/u]\n {1}", string.Format("{0:D3}", lvl), mode.maxLevel);
 		}
 
+		public void SetLines(int lines){
+			RichTextLabel label = GetNode("Viewport/Lines") as RichTextLabel;
+			label.BbcodeText = string.Format("[color=#00ffff]LINES[/color]\n {0}", string.Format("{0:D3}", lines));			
+		}
+
 		private void SetTetrionColor(string color){
 			Spatial tetrion = GetNode("Tetrion") as Spatial;
 			for(int i=0; i < tetrion.GetChildCount(); i++){

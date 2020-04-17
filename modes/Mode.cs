@@ -31,6 +31,7 @@ namespace Godtris{
     protected Game _game;
 
     protected bool _hardDrop = false;
+    protected int _lines = 0;
 
     public Mode(Game game, List<Block> blocks){
       this._game = game;
@@ -392,6 +393,9 @@ namespace Godtris{
             }
           }
         }
+
+        _lines += _clearedLines.Count;
+        _game.SetLines(_lines);
 
         int newLevel = _level.level+_clearedLines.Count;
         SetLevel(newLevel);
