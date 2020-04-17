@@ -107,6 +107,13 @@ namespace Godtris{
 			label.BbcodeText = string.Format("[color=#ffff00]LEVEL[/color]\n [u]{0}[/u]\n {1}", string.Format("{0:D3}", lvl), mode.maxLevel);
 		}
 
+		public void PlaySound(string id){
+			AudioStreamPlayer asp = GetNode(id) as AudioStreamPlayer;
+			AudioStreamOGGVorbis sound = asp.Stream as AudioStreamOGGVorbis;
+			sound.Loop = false;
+			asp.Play();
+		}
+
 		private void StartTGM2(){
 			mode = new TGM2Mode(this, _blocks, 0);
 			controls = new Controls(mode);

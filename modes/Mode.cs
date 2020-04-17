@@ -62,6 +62,7 @@ namespace Godtris{
       }
       
       if(_waitForLockDelay && (_count3 >= _level.lockDelay)){
+        _game.PlaySound(Sounds.LOCK);
         _waitForLockDelay = false;
         GetCurrentPiece().locked = true;
         if(CheckLines()){
@@ -221,6 +222,7 @@ namespace Godtris{
             }
             break;
           case Controls.HARD_DROP_ACTION_ID:
+            _game.PlaySound(Sounds.HARD_DROP);
             _count = 20;
             break;
         }
@@ -279,6 +281,7 @@ namespace Godtris{
             for(int i=3; i < 7; i++){
               AddPreviewBlock(game, i, 0, "red");
             }
+            _game.PlaySound(Sounds.I_PIECE);
             break;
           case Piece.Z:
             for(int i=3; i < 5; i++){
@@ -287,6 +290,7 @@ namespace Godtris{
             for(int i=4; i < 6; i++){
               AddPreviewBlock(game, i, -1, "green");
             }
+            _game.PlaySound(Sounds.Z_PIECE);
             break;
           case Piece.S:
             for(int i=4; i < 6; i++){
@@ -295,30 +299,35 @@ namespace Godtris{
             for(int i=3; i < 5; i++){
               AddPreviewBlock(game, i, -1, "magenta");
             }
+            _game.PlaySound(Sounds.S_PIECE);
             break;
           case Piece.J:
             for(int i=3; i < 6; i++){
               AddPreviewBlock(game, i, 0, "blue");
             }
             AddPreviewBlock(game, 5, -1, "blue");
+            _game.PlaySound(Sounds.J_PIECE);
             break;
           case Piece.L:
             for(int i=3; i < 6; i++){
               AddPreviewBlock(game, i, 0, "orange");
             }
             AddPreviewBlock(game, 3, -1, "orange");
+            _game.PlaySound(Sounds.L_PIECE);
             break;
           case Piece.O:
             for(int i=4; i < 6; i++){
               AddPreviewBlock(game, i, 0, "yellow");
               AddPreviewBlock(game, i, -1, "yellow");
             }
+            _game.PlaySound(Sounds.O_PIECE);
             break;
           case Piece.T:
             for(int i=3; i < 6; i++){
               AddPreviewBlock(game, i, 0, "cyan");
             }
             AddPreviewBlock(game, 4, -1, "cyan");
+            _game.PlaySound(Sounds.T_PIECE);
             break;
         }
 
@@ -356,6 +365,8 @@ namespace Godtris{
       }
 
       if(_clearedLines.Count > 0){
+        _game.PlaySound(Sounds.LINE_FALL);
+
         for(int i=0; i < _clearedLines.Count; i++){
           for(int j=1; j < Game.GRID_HEIGHT+4; j++){
             if(j > minClearedLineIndex){

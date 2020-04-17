@@ -38,7 +38,7 @@ anims/clear = SubResource( 2 )
 
 [node name="Particles" type="Particles" parent="."]
 transform = Transform( 0.1, 0, 0, 0, 0.1, 0, 0, 0, 0.1, 0, 0, 0 )
-amount = 15
+amount = 20
 lifetime = 0.5
 speed_scale = 1.5
 explosiveness = 1.0

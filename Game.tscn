@@ -1,7 +1,17 @@
-[gd_scene load_steps=7 format=2]
+[gd_scene load_steps=17 format=2]
 
 [ext_resource path="res://Game.cs" type="Script" id=1]
 [ext_resource path="res://Tetrion.tscn" type="PackedScene" id=2]
+[ext_resource path="res://sounds/i.ogg" type="AudioStream" id=3]
+[ext_resource path="res://sounds/j.ogg" type="AudioStream" id=4]
+[ext_resource path="res://sounds/l.ogg" type="AudioStream" id=5]
+[ext_resource path="res://sounds/line.ogg" type="AudioStream" id=6]
+[ext_resource path="res://sounds/lock.ogg" type="AudioStream" id=7]
+[ext_resource path="res://sounds/o.ogg" type="AudioStream" id=8]
+[ext_resource path="res://sounds/s.ogg" type="AudioStream" id=9]
+[ext_resource path="res://sounds/t.ogg" type="AudioStream" id=10]
+[ext_resource path="res://sounds/z.ogg" type="AudioStream" id=11]
+[ext_resource path="res://sounds/harddrop.ogg" type="AudioStream" id=12]
 
 [sub_resource type="Environment" id=1]
 ambient_light_color = Color( 1, 1, 1, 1 )
@@ -55,3 +65,33 @@ scroll_active = false
 transform = Transform( 0.920532, 0, -0.390667, 0, 1, 0, 0.390667, 0, 0.920532, -0.964419, -1.70383, 0 )
 mesh = SubResource( 2 )
 material/0 = SubResource( 4 )
+
+[node name="I_piece" type="AudioStreamPlayer" parent="."]
+stream = ExtResource( 3 )
+
+[node name="J_piece" type="AudioStreamPlayer" parent="."]
+stream = ExtResource( 4 )
+
+[node name="L_piece" type="AudioStreamPlayer" parent="."]
+stream = ExtResource( 5 )
+
+[node name="LineFall" type="AudioStreamPlayer" parent="."]
+stream = ExtResource( 6 )
+
+[node name="Lock" type="AudioStreamPlayer" parent="."]
+stream = ExtResource( 7 )
+
+[node name="O_piece" type="AudioStreamPlayer" parent="."]
+stream = ExtResource( 8 )
+
+[node name="S_piece" type="AudioStreamPlayer" parent="."]
+stream = ExtResource( 9 )
+
+[node name="T_piece" type="AudioStreamPlayer" parent="."]
+stream = ExtResource( 10 )
+
+[node name="Z_piece" type="AudioStreamPlayer" parent="."]
+stream = ExtResource( 11 )
+
+[node name="HardDrop" type="AudioStreamPlayer" parent="."]
+stream = ExtResource( 12 )

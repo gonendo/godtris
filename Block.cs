@@ -68,7 +68,7 @@ namespace Godtris{
     public void Clear(){
       Particles particles = _block.GetNode("Particles") as Particles;
       CubeMesh cube = new CubeMesh();
-      cube.Size = new Vector3(0.15f, 0.15f, 0.15f);
+      cube.Size = new Vector3(0.2f, 0.2f, 0.2f);
       SpatialMaterial material = new SpatialMaterial();
       material.AlbedoColor = Color.ColorN(_color);
       cube.Material = material;
