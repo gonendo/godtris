@@ -42,7 +42,7 @@ namespace Godtris{
 			}
 		}
 
-		private async void StartMode(){
+		private void StartMode(){
 			_starting = true;
 			_started = false;
 			_gameover = false;
@@ -60,13 +60,7 @@ namespace Godtris{
 			if(mode!=null){
 				mode.DestroyPreview(this);
 			}
-			Timer t = new Timer();
-			t.OneShot = true;
-			t.WaitTime = 1;
-			t.Autostart = true;
-			AddChild(t);
-			await ToSignal(t, "timeout");
-			t.QueueFree();
+
 			StartTGM2();
 		}
 
@@ -107,6 +101,19 @@ namespace Godtris{
 			label.BbcodeText = string.Format("[color=#ffff00]LEVEL[/color]\n [u]{0}[/u]\n {1}", string.Format("{0:D3}", lvl), mode.maxLevel);
 		}
 
+		private void SetTetrionColor(string color){
+			Spatial tetrion = GetNode("Tetrion") as Spatial;
+			for(int i=0; i < tetrion.GetChildCount(); i++){
+				MeshInstance mesh = tetrion.GetChild(i) as MeshInstance;
+				if(mesh != null){
+					SpatialMaterial material = mesh.GetSurfaceMaterial(0) as SpatialMaterial;
+					if(material != null){
+						material.AlbedoColor = new Color(color);
+					}
+				}
+			}
+		}
+
 		public void PlaySound(string id){
 			AudioStreamPlayer asp = GetNode(id) as AudioStreamPlayer;
 			AudioStreamOGGVorbis sound = asp.Stream as AudioStreamOGGVorbis;
@@ -114,9 +121,18 @@ namespace Godtris{
 			asp.Play();
 		}
 
-		private void StartTGM2(){
+		private async void StartTGM2(){
 			mode = new TGM2Mode(this, _blocks, 0);
+			SetTetrionColor(mode.GetTetrionColor());
 			controls = new Controls(mode);
+			Timer t = new Timer();
+			t.OneShot = true;
+			t.WaitTime = 1;
+			t.Autostart = true;
+			AddChild(t);
+			await ToSignal(t, "timeout");
+			t.QueueFree();
+
 			_started = true;
 			_starting = false;
 		}

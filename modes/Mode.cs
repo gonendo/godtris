@@ -30,6 +30,8 @@ namespace Godtris{
 
     protected Game _game;
 
+    protected bool _hardDrop = false;
+
     public Mode(Game game, List<Block> blocks){
       this._game = game;
       this._blocks = blocks;
@@ -65,6 +67,9 @@ namespace Godtris{
         _game.PlaySound(Sounds.LOCK);
         _waitForLockDelay = false;
         GetCurrentPiece().locked = true;
+        for(int j=0; j < 20; j++){
+          piece.MoveDown();
+        }
         if(CheckLines()){
           StartLineClear();
         }
@@ -72,6 +77,7 @@ namespace Godtris{
 
       if(_waitForARE && _count2 >= _level.are){
         _waitForARE = false;
+        _hardDrop = false;
         RenderNextPiece();
       }
 
@@ -222,8 +228,11 @@ namespace Godtris{
             }
             break;
           case Controls.HARD_DROP_ACTION_ID:
-            _game.PlaySound(Sounds.HARD_DROP);
-            _count = 20;
+            if(!_hardDrop){
+              _game.PlaySound(Sounds.HARD_DROP);
+              _count = 20;
+              _hardDrop = true;
+            }
             break;
         }
 
@@ -398,6 +407,10 @@ namespace Godtris{
       get{
         return _maxLevel;
       }
+    }
+
+    public virtual string GetTetrionColor(){
+      return null;
     }
   }
 }

@@ -67,6 +67,10 @@ namespace Godtris{
       StartARE();
     }
 
+    public override string GetTetrionColor(){
+      return "2fafeb";
+    }
+
     public override Level GetLevel(int level){
       if(_level!=null && _level.level == level){
         return _level;
