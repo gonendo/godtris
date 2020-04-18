@@ -1,6 +1,9 @@
-[gd_scene load_steps=2 format=2]
+[gd_scene load_steps=3 format=2]
 
 [ext_resource path="res://Main.cs" type="Script" id=1]
+
+[sub_resource type="Environment" id=1]
+ambient_light_color = Color( 1, 1, 1, 1 )
 
 [node name="Main" type="Spatial"]
 script = ExtResource( 1 )
@@ -11,5 +14,8 @@ current = true
 
 [node name="DirectionalLight" type="DirectionalLight" parent="."]
 
-[node name="ScenePosition" type="Position3D" parent="."]
+[node name="GamePosition" type="Position3D" parent="."]
 transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -5 )
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="."]
+environment = SubResource( 1 )

@@ -1,31 +1,44 @@
 //Info from https://tetris.fandom.com/wiki/Tetris_The_Absolute_The_Grand_Master_2
 using System.Collections.Generic;
-using Godot;
 
 namespace Godtris{
   public class TGM2Mode : Mode
   {
-    private Dictionary<int[], int[]> _timings;
-    private Dictionary<int, int> _gravities;
-    private const int ARE_TIMINGS_INDEX = 0;
-    private const int DAS_TIMINGS_INDEX = 1;
-    private const int LOCK_TIMINGS_INDEX = 2;
-    private const int LINECLEAR_TIMINGS_INDEX = 3;
+    protected Dictionary<int[], int[]> _timings;
+    protected Dictionary<int, int> _gravities;
+    protected const int ARE_TIMINGS_INDEX = 0;
+    protected const int LINE_ARE_TIMINGS_INDEX = 1;
+    protected const int DAS_TIMINGS_INDEX = 2;
+    protected const int LOCK_TIMINGS_INDEX = 3;
+    protected const int LINECLEAR_TIMINGS_INDEX = 4;
 
-    private TGMRandomizer _randomizer;
+    protected TGMRandomizer _randomizer;
 
     public TGM2Mode(Game game, List<Block> blocks, int level) : base(game, blocks){
       _timings = new Dictionary<int[], int[]>();
-
-      //MASTER MODE
-      _timings.Add(new int[2] {0, 499}, new int[4] {25,16,30,40});
-      _timings.Add(new int[2] {500, 599}, new int[4] {25,10,30,25});
-      _timings.Add(new int[2] {600, 699}, new int[4] {25,10,30,16});
-      _timings.Add(new int[2] {700, 799}, new int[4] {16,10,30,12});
-      _timings.Add(new int[2] {800, 899}, new int[4] {12,16,30,40});
-      _timings.Add(new int[2] {900, 999}, new int[4] {12,16,30,40});
-
       _gravities = new Dictionary<int, int>();
+      SetTimings();
+
+      _maxLevel = 999;
+      SetLevel(level);
+
+      _randomizer = new TGMRandomizer(_blocks);
+      _history.Add(new Piece(Piece.EMPTY, this._blocks));
+
+      //START
+      _lineARE = 0;
+      StartARE();
+    }
+
+    protected virtual void SetTimings(){
+      //MASTER MODE
+      _timings.Add(new int[2] {0, 499}, new int[5] {25,0,16,30,40});
+      _timings.Add(new int[2] {500, 599}, new int[5] {25,0,10,30,25});
+      _timings.Add(new int[2] {600, 699}, new int[5] {25,0,10,30,16});
+      _timings.Add(new int[2] {700, 799}, new int[5] {16,0,10,30,12});
+      _timings.Add(new int[2] {800, 899}, new int[5] {12,0,16,30,40});
+      _timings.Add(new int[2] {900, 999}, new int[5] {12,0,16,30,40});
+
       _gravities.Add(0, 4);
       _gravities.Add(30, 6);
       _gravities.Add(35, 8);
@@ -56,15 +69,6 @@ namespace Godtris{
       _gravities.Add(420, 1024); // 4G
       _gravities.Add(450, 768); // 3G
       _gravities.Add(500, 5120); // 20G
-
-      _maxLevel = 999;
-      SetLevel(level);
-
-      _randomizer = new TGMRandomizer(_blocks);
-      _history.Add(new Piece(Piece.EMPTY, this._blocks));
-
-      //START
-      StartARE();
     }
 
     public override string GetTetrionColor(){
@@ -89,6 +93,7 @@ namespace Godtris{
         level, 
         gravity, 
         timings[ARE_TIMINGS_INDEX], 
+        timings[LINE_ARE_TIMINGS_INDEX], 
         timings[DAS_TIMINGS_INDEX], 
         timings[LOCK_TIMINGS_INDEX], 
         timings[LINECLEAR_TIMINGS_INDEX]
@@ -132,7 +137,7 @@ namespace Godtris{
       }
     }
 
-    private int[] GetTimings(int level){
+    protected int[] GetTimings(int level){
       int[] timings = {};
       foreach(KeyValuePair<int[],int[]> values in _timings){
         if( (level >= values.Key[values.Key.GetLowerBound(0)]) && (level <= values.Key[values.Key.GetUpperBound(0)]) ){

@@ -33,6 +33,8 @@ namespace Godtris{
     protected bool _hardDrop = false;
     protected int _lines = 0;
 
+    protected int _lineARE;
+
     public Mode(Game game, List<Block> blocks){
       this._game = game;
       this._blocks = blocks;
@@ -76,7 +78,7 @@ namespace Godtris{
         }
       }
 
-      if(_waitForARE && _count2 >= _level.are){
+      if(_waitForARE && (_count2 >= _level.are+_lineARE)){
         _waitForARE = false;
         _hardDrop = false;
         RenderNextPiece();
@@ -84,6 +86,7 @@ namespace Godtris{
 
       if(_waitForLineClear && _count5 >= _level.lineClear){
         _waitForLineClear = false;
+        _lineARE = _level.lineARE;
         StartARE();
       }
 
@@ -98,6 +101,7 @@ namespace Godtris{
                 }
               }
               else if(!_waitForLockDelay){
+                _lineARE = 0;
                 StartARE();
               }
             }

@@ -6,6 +6,8 @@ namespace Godtris{
 	{
 		public const int GRID_WIDTH = 10;
 		public const int GRID_HEIGHT = 20;
+		public const int MASTER_MODE = 1;
+		public const int DEATH_MODE = 2;
 		public Position3D tetrionBottomLeft;
 		public Vector3 tetrionBottomLeftPosition;
 		public Position3D previewPosition;
@@ -15,6 +17,7 @@ namespace Godtris{
 		private bool _started = false;
 		private bool _gameover = false;
 		private bool _starting = false;
+		private int _mode;
 
 		public override void _Ready()
 		{
@@ -23,14 +26,12 @@ namespace Godtris{
 			tetrionBottomLeftPosition = tetrionBottomLeft.ToGlobal(tetrionBottomLeft.Transform.origin);
 
 			previewPosition = GetNode("PreviewPosition") as Position3D;
-
-			StartMode();
 		}
 
 		public override void _PhysicsProcess(float delta)
 		{
 			if(!_gameover && !_starting && Input.IsActionJustPressed(Controls.RESTART_ACTION_ID)){
-				StartMode();
+				StartMode(_mode);
 			}
 			if(_started && !_gameover){
 				controls.Update();
@@ -42,7 +43,8 @@ namespace Godtris{
 			}
 		}
 
-		private void StartMode(){
+		public async void StartMode(int gameMode){
+			_mode = gameMode;
 			_starting = true;
 			_started = false;
 			_gameover = false;
@@ -61,7 +63,27 @@ namespace Godtris{
 				mode.DestroyPreview(this);
 			}
 
-			StartTGM2();
+			switch(_mode){
+				case MASTER_MODE:
+					mode = new TGM2Mode(this, _blocks, 0);
+					break;
+				case DEATH_MODE:
+					mode = new DeathMode(this, _blocks, 0);
+					break;
+			}
+			
+			SetTetrionColor(mode.GetTetrionColor());
+			controls = new Controls(mode);
+			Timer t = new Timer();
+			t.OneShot = true;
+			t.WaitTime = 1;
+			t.Autostart = true;
+			AddChild(t);
+			await ToSignal(t, "timeout");
+			t.QueueFree();
+
+			_started = true;
+			_starting = false;
 		}
 
 		public async void GameOver(){
@@ -126,20 +148,5 @@ namespace Godtris{
 			asp.Play();
 		}
 
-		private async void StartTGM2(){
-			mode = new TGM2Mode(this, _blocks, 0);
-			SetTetrionColor(mode.GetTetrionColor());
-			controls = new Controls(mode);
-			Timer t = new Timer();
-			t.OneShot = true;
-			t.WaitTime = 1;
-			t.Autostart = true;
-			AddChild(t);
-			await ToSignal(t, "timeout");
-			t.QueueFree();
-
-			_started = true;
-			_starting = false;
-		}
 	}
 }
