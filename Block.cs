@@ -65,19 +65,6 @@ namespace Godtris{
       material.AlbedoColor = material.AlbedoColor.Darkened(-0.5f);
     }
 
-    public void Clear(){
-      Particles particles = _block.GetNode("Particles") as Particles;
-      CubeMesh cube = new CubeMesh();
-      cube.Size = new Vector3(0.2f, 0.2f, 0.2f);
-      SpatialMaterial material = new SpatialMaterial();
-      material.AlbedoColor = Color.ColorN(_color);
-      cube.Material = material;
-      particles.DrawPass1 = cube;
-      
-      AnimationPlayer player = _block.GetNode("AnimationPlayer") as AnimationPlayer;
-      player.Play("clear");
-    }
-
     public bool locked{
       get{
         return _locked;

@@ -1,4 +1,5 @@
 using Godot;
+using System;
 using System.Collections.Generic;
 
 namespace Godtris{
@@ -18,6 +19,7 @@ namespace Godtris{
 		private bool _gameover = false;
 		private bool _starting = false;
 		private int _mode;
+		private uint _time;
 
 		public override void _Ready()
 		{
@@ -34,6 +36,8 @@ namespace Godtris{
 				StartMode(_mode);
 			}
 			if(_started && !_gameover){
+				TimeSpan t = TimeSpan.FromMilliseconds(OS.GetTicksMsec() - _time);
+				SetTime(string.Format(@"{0:mm\:ss\:ff}", t));
 				controls.Update();
 				mode.RenderPreview(this);
 				mode.Update();
@@ -73,15 +77,28 @@ namespace Godtris{
 			}
 			
 			SetTetrionColor(mode.GetTetrionColor());
+			SetLevel(0);
+			SetLines(0);
+			SetTime("00:00:00");
 			controls = new Controls(mode);
+			RichTextLabel readyLabel = GetNode("Viewport2/Ready") as RichTextLabel;
+			MeshInstance mesh = GetNode("Ready") as MeshInstance;
+			mesh.Show();
+			readyLabel.BbcodeText = "[center]READY[/center]";
 			Timer t = new Timer();
-			t.OneShot = true;
-			t.WaitTime = 1;
+			t.WaitTime = 0.5f;
 			t.Autostart = true;
 			AddChild(t);
 			await ToSignal(t, "timeout");
+			readyLabel.BbcodeText = "[center]GO ![/center]";
+			t.Stop();
+			t.Start();
+
+			await ToSignal(t, "timeout");
+			mesh.Hide();
 			t.QueueFree();
 
+			_time = OS.GetTicksMsec();
 			_started = true;
 			_starting = false;
 		}
@@ -120,12 +137,17 @@ namespace Godtris{
 		public void SetLevel(int level){
 			RichTextLabel label = GetNode("Viewport/Level") as RichTextLabel;
 			int lvl = Mathf.Min(level, mode.maxLevel);
-			label.BbcodeText = string.Format("[color=#ffff00]LEVEL[/color]\n [u]{0}[/u]\n {1}", string.Format("{0:D3}", lvl), mode.maxLevel);
+			label.BbcodeText = string.Format("[color=#ffff00]LEVEL[/color]\n [u]{0}[/u]\n {1}", string.Format("{0:D3}", lvl), string.Format("{0:D3}", mode.maxLevel));
 		}
 
 		public void SetLines(int lines){
 			RichTextLabel label = GetNode("Viewport/Lines") as RichTextLabel;
 			label.BbcodeText = string.Format("[color=#00ffff]LINES[/color]\n {0}", string.Format("{0:D3}", lines));			
+		}
+
+		public void SetTime(string time){
+			RichTextLabel timeLabel = GetNode("Viewport3/Time") as RichTextLabel;
+			timeLabel.BbcodeText = string.Format("[center]{0}[/center]", time);
 		}
 
 		private void SetTetrionColor(string color){

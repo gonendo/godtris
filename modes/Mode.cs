@@ -27,6 +27,7 @@ namespace Godtris{
 
     protected bool _firstPiece = true;
     protected List<int> _clearedLines;
+    protected int _minClearedLineIndex = -1;
 
     protected Game _game;
 
@@ -63,13 +64,16 @@ namespace Godtris{
 
       if(_waitForDAS && (_count4 >= _level.das)){
         _waitForDAS = false;
-        _autoShift= true;
+        _autoShift = true;
       }
       
       if(_waitForLockDelay && (_count3 >= _level.lockDelay)){
         _game.PlaySound(Sounds.LOCK);
         _waitForLockDelay = false;
         GetCurrentPiece().locked = true;
+        _waitForDAS = false;
+        _autoShift = false;
+
         for(int j=0; j < 20; j++){
           piece.MoveDown();
         }
@@ -85,7 +89,32 @@ namespace Godtris{
       }
 
       if(_waitForLineClear && _count5 >= _level.lineClear){
+        foreach(int lineIndex in _clearedLines){
+          foreach(Block block in _blocks){
+            if(block.y == lineIndex){
+              block.empty = true;
+            }
+          }
+        }
+
+        _lines += _clearedLines.Count;
+        _game.SetLines(_lines);
+        int newLevel = _level.level+_clearedLines.Count;
+        newLevel = Mathf.Min(newLevel, _maxLevel);
+        SetLevel(newLevel);
+        _game.SetLevel(newLevel);
+        
+        DropLinesNaive();
+
+        _minClearedLineIndex = -1;
+        _clearedLines.Clear();
         _waitForLineClear = false;
+
+        if(newLevel == _maxLevel){
+          _game.GameOver();
+          return;
+        }
+
         _lineARE = _level.lineARE;
         StartARE();
       }
@@ -192,9 +221,8 @@ namespace Godtris{
 
           //increase level
           if(next.name != Piece.EMPTY){
-            if(string.Format("{0:D3}", _level.level).Substr(1, 2)!="99"){
+            if((_level.level < _maxLevel-1) && string.Format("{0:D3}", _level.level).Substr(1, 2)!="99"){
               int newLevel = _level.level + 1;
-              newLevel = Mathf.Min(newLevel, _maxLevel);
               SetLevel(newLevel);
               _game.SetLevel(newLevel);
             }
@@ -350,8 +378,6 @@ namespace Godtris{
     }
 
     protected bool CheckLines(){
-      _clearedLines.Clear();
-      int minClearedLineIndex = -1;
       for(int i=0; i < Game.GRID_HEIGHT; i++){
         int filled = 0;
         foreach(Block block in _blocks){
@@ -361,54 +387,44 @@ namespace Godtris{
         }
         if(filled == Game.GRID_WIDTH){
           _clearedLines.Add(i);
-          if(minClearedLineIndex == -1){
-            minClearedLineIndex = i;
+          if(_minClearedLineIndex == -1){
+            _minClearedLineIndex = i;
           }
           else{
-            minClearedLineIndex = Mathf.Min(i, minClearedLineIndex);
+            _minClearedLineIndex = Mathf.Min(i, _minClearedLineIndex);
           }
         }
       }
       foreach(int lineIndex in _clearedLines){
         foreach(Block block in _blocks){
           if(block.y == lineIndex){
-            block.Clear();
-            block.empty = true;
+            block.color = "gray";
           }
         }
       }
 
-      if(_clearedLines.Count > 0){
-        _game.PlaySound(Sounds.LINE_FALL);
+      return _clearedLines.Count > 0;
+    }
 
-        for(int i=0; i < _clearedLines.Count; i++){
-          for(int j=1; j < Game.GRID_HEIGHT+4; j++){
-            if(j > minClearedLineIndex){
-              foreach(Block block in _blocks){
-                if(!block.empty && block.y == j){
-                  Block blockBelow = _blocks.Find(b => b.y == j-1 && b.x == block.x);
-                  blockBelow.color = block.color;
-                  blockBelow.empty = false;
-                  blockBelow.locked = true;
-                  block.empty = true;
-                  block.locked = false;
-                }
+    protected void DropLinesNaive(){
+      _game.PlaySound(Sounds.LINE_FALL);
+
+      for(int i=0; i < _clearedLines.Count; i++){
+        for(int j=1; j < Game.GRID_HEIGHT+4; j++){
+          if(j > _minClearedLineIndex){
+            foreach(Block block in _blocks){
+              if(!block.empty && block.y == j){
+                Block blockBelow = _blocks.Find(b => b.y == j-1 && b.x == block.x);
+                blockBelow.color = block.color;
+                blockBelow.empty = false;
+                blockBelow.locked = true;
+                block.empty = true;
+                block.locked = false;
               }
             }
           }
         }
-
-        _lines += _clearedLines.Count;
-        _game.SetLines(_lines);
-
-        int newLevel = _level.level+_clearedLines.Count;
-        SetLevel(newLevel);
-        _game.SetLevel(newLevel);
-        
-        return true;
       }
-      
-      return false;
     }
 
     public int maxLevel{
