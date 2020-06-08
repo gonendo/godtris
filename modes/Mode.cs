@@ -253,7 +253,8 @@ namespace Godtris{
     }
 
     public void MovePiece(string actionId){
-      if(_waitForDAS || _waitForLineClear || (_waitForARE && _autoShift)){
+      if( (_waitForDAS && (actionId == Controls.LEFT_ACTION_ID || actionId == Controls.RIGHT_ACTION_ID)) || 
+      _waitForLineClear || (_waitForARE && _autoShift) ){
         return;
       }
 
@@ -273,7 +274,7 @@ namespace Godtris{
             }
             break;
           case Controls.HARD_DROP_ACTION_ID:
-            if(!_hardDrop){
+            if(!_waitForARE && !_hardDrop){
               _game.PlaySound(Sounds.HARD_DROP);
               _count = 20;
               _hardDrop = true;

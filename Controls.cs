@@ -16,17 +16,17 @@ namespace Godtris{
     }
 
     public void Update(){
-      if (Input.IsActionPressed(LEFT_ACTION_ID)){
-        _mode.MovePiece(LEFT_ACTION_ID);
-      }
-      else if(Input.IsActionPressed(RIGHT_ACTION_ID)){
-        _mode.MovePiece(RIGHT_ACTION_ID);
+      if(Input.IsActionPressed(HARD_DROP_ACTION_ID)){
+        _mode.MovePiece(HARD_DROP_ACTION_ID);
       }
       else if(Input.IsActionPressed(SOFT_DROP_ACTION_ID)){
         _mode.MovePiece(SOFT_DROP_ACTION_ID);
       }
-      else if(Input.IsActionJustPressed(HARD_DROP_ACTION_ID)){
-        _mode.MovePiece(HARD_DROP_ACTION_ID);
+      else if (Input.IsActionPressed(LEFT_ACTION_ID)){
+        _mode.MovePiece(LEFT_ACTION_ID);
+      }
+      else if(Input.IsActionPressed(RIGHT_ACTION_ID)){
+        _mode.MovePiece(RIGHT_ACTION_ID);
       }
       if(Input.IsActionJustPressed(ROTATE_LEFT_ACTION_ID)){
         _mode.RotatePiece(ROTATE_LEFT_ACTION_ID);
