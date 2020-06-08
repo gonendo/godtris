@@ -8,7 +8,8 @@ namespace Godtris{
     public const string S_PIECE = "S_piece";
     public const string O_PIECE = "O_piece";
     public const string T_PIECE = "T_piece";
-    public const string LINE_FALL = "LineFall";
+    public const string CLEAR = "Clear";
+    public const string FALL = "Fall";
     public const string LOCK = "Lock";
     public const string HARD_DROP = "HardDrop";
   }

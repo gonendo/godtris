@@ -1,17 +1,18 @@
-[gd_scene load_steps=22 format=2]
+[gd_scene load_steps=23 format=2]
 
 [ext_resource path="res://Game.cs" type="Script" id=1]
 [ext_resource path="res://Tetrion.tscn" type="PackedScene" id=2]
 [ext_resource path="res://sounds/i.ogg" type="AudioStream" id=3]
 [ext_resource path="res://sounds/j.ogg" type="AudioStream" id=4]
 [ext_resource path="res://sounds/l.ogg" type="AudioStream" id=5]
-[ext_resource path="res://sounds/line.ogg" type="AudioStream" id=6]
+[ext_resource path="res://sounds/fall.ogg" type="AudioStream" id=6]
 [ext_resource path="res://sounds/lock.ogg" type="AudioStream" id=7]
 [ext_resource path="res://sounds/o.ogg" type="AudioStream" id=8]
 [ext_resource path="res://sounds/s.ogg" type="AudioStream" id=9]
 [ext_resource path="res://sounds/t.ogg" type="AudioStream" id=10]
 [ext_resource path="res://sounds/z.ogg" type="AudioStream" id=11]
 [ext_resource path="res://sounds/harddrop.ogg" type="AudioStream" id=12]
+[ext_resource path="res://sounds/clear.ogg" type="AudioStream" id=13]
 
 [sub_resource type="QuadMesh" id=1]
 
@@ -126,9 +127,6 @@ stream = ExtResource( 4 )
 [node name="L_piece" type="AudioStreamPlayer" parent="."]
 stream = ExtResource( 5 )
 
-[node name="LineFall" type="AudioStreamPlayer" parent="."]
-stream = ExtResource( 6 )
-
 [node name="Lock" type="AudioStreamPlayer" parent="."]
 stream = ExtResource( 7 )
 
@@ -146,6 +144,12 @@ stream = ExtResource( 11 )
 
 [node name="HardDrop" type="AudioStreamPlayer" parent="."]
 stream = ExtResource( 12 )
+
+[node name="Clear" type="AudioStreamPlayer" parent="."]
+stream = ExtResource( 13 )
+
+[node name="Fall" type="AudioStreamPlayer" parent="."]
+stream = ExtResource( 6 )
 
 [node name="Viewport3" type="Viewport" parent="."]
 size = Vector2( 100, 35 )

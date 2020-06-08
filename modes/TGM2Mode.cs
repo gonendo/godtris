@@ -1,5 +1,6 @@
 //Info from https://tetris.fandom.com/wiki/Tetris_The_Absolute_The_Grand_Master_2
 using System.Collections.Generic;
+using Godot;
 
 namespace Godtris{
   public class TGM2Mode : Mode
@@ -26,8 +27,7 @@ namespace Godtris{
       _history.Add(new Piece(Piece.EMPTY, this._blocks));
 
       //START
-      _lineARE = 0;
-      StartARE();
+      GiveNextPiece();
     }
 
     protected virtual void SetTimings(){

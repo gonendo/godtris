@@ -9,12 +9,16 @@ namespace Godtris{
     private bool _empty;
     private bool _locked;
     private bool _offgrid;
+    private Texture _texture;
 
     public Block(int x, int y, Game game){
       this.x = x;
       this.y = y;
       this._game = game;
       this._block = Godtris.Utils.GetBlock(Color.ColorN("black"));
+      MeshInstance mesh = this._block.GetNode("MeshInstance") as MeshInstance;
+      SpatialMaterial material = mesh.GetSurfaceMaterial(0) as SpatialMaterial;
+      this._texture = material.AlbedoTexture;
       if(y >= Game.GRID_HEIGHT){
         this._block.Hide();
         _offgrid = true;
@@ -56,6 +60,21 @@ namespace Godtris{
             material.AlbedoColor = material.AlbedoColor.Darkened(0.5f);
           }
         }
+      }
+    }
+
+    public void RestoreTexture(){
+        MeshInstance mesh = _block.GetNode("MeshInstance") as MeshInstance;
+        SpatialMaterial material = mesh.GetSurfaceMaterial(0) as SpatialMaterial;
+        material.AlbedoTexture = _texture;
+    }
+
+    public void Clear(){
+      if(_block!=null){
+        MeshInstance mesh = _block.GetNode("MeshInstance") as MeshInstance;
+        SpatialMaterial material = mesh.GetSurfaceMaterial(0) as SpatialMaterial;
+        material.AlbedoTexture = null;
+        color = "white";
       }
     }
 

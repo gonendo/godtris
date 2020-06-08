@@ -53,8 +53,7 @@ namespace Godtris{
       if(Input.IsActionJustReleased(Controls.LEFT_ACTION_ID) || 
         Input.IsActionJustReleased(Controls.RIGHT_ACTION_ID) || 
         Input.IsActionJustReleased(Controls.SOFT_DROP_ACTION_ID)){
-        _waitForDAS = false;
-        _autoShift = false;
+        ResetDAS();
       }
 
       Piece piece = GetCurrentPiece();
@@ -71,8 +70,6 @@ namespace Godtris{
         _game.PlaySound(Sounds.LOCK);
         _waitForLockDelay = false;
         GetCurrentPiece().locked = true;
-        _waitForDAS = false;
-        _autoShift = false;
 
         for(int j=0; j < 20; j++){
           piece.MoveDown();
@@ -80,6 +77,8 @@ namespace Godtris{
         if(CheckLines()){
           StartLineClear();
         }
+
+        _count = 1;
       }
 
       if(_waitForARE && (_count2 >= _level.are+_lineARE)){
@@ -88,15 +87,17 @@ namespace Godtris{
         RenderNextPiece();
       }
 
-      if(_waitForLineClear && _count5 >= _level.lineClear){
+      if(_waitForLineClear && _count5 >= _level.lineClear/2){
         foreach(int lineIndex in _clearedLines){
           foreach(Block block in _blocks){
             if(block.y == lineIndex){
               block.empty = true;
+              block.RestoreTexture();
             }
           }
         }
-
+      }
+      if(_waitForLineClear && _count5 >= _level.lineClear){
         _lines += _clearedLines.Count;
         _game.SetLines(_lines);
         int newLevel = _level.level+_clearedLines.Count;
@@ -130,8 +131,7 @@ namespace Godtris{
                 }
               }
               else if(!_waitForLockDelay){
-                _lineARE = 0;
-                StartARE();
+                GiveNextPiece();
               }
             }
             else if(piece.locked){
@@ -149,6 +149,11 @@ namespace Godtris{
       }
     }
 
+    protected void GiveNextPiece(){
+      _lineARE = 0;
+      StartARE();
+    }
+
     private void StartDAS(){
       if(_level.das > 0){
         _count4 = 0;
@@ -156,28 +161,35 @@ namespace Godtris{
       }
     }
 
-    protected void StartARE(){
+    private void ResetDAS(){
+      _count4 = 0;
+      _waitForDAS = false;
+      _autoShift = false;
+    }
+
+    private void StartARE(){
+      ResetDAS();
       if(_level.are > 0){
         _count2 = 0;
         _waitForARE = true;
       }
     }
 
-    protected void StartLineClear(){
+    private void StartLineClear(){
       if(_level.lineClear > 0){
         _count5 = 0;
         _waitForLineClear = true;
       }
     }
 
-    protected void StartLockDelay(){
+    private void StartLockDelay(){
       if(_level.lockDelay > 0){
         _count3 = 0;
         _waitForLockDelay = true;
       }
     }
 
-    protected void RenderNextPiece(){
+    private void RenderNextPiece(){
       if(_history.Count > 0){
         if(!_firstPiece){
           _history.RemoveAt(0);
@@ -241,7 +253,7 @@ namespace Godtris{
     }
 
     public void MovePiece(string actionId){
-      if(_waitForDAS || _waitForLineClear){
+      if(_waitForDAS || _waitForLineClear || (_waitForARE && _autoShift)){
         return;
       }
 
@@ -287,7 +299,7 @@ namespace Godtris{
 
     }
 
-    protected void AddPreviewBlock(Game game, int x, int y, string color){
+    private void AddPreviewBlock(Game game, int x, int y, string color){
       if(previewBlocks==null){
         previewBlocks = new List<Spatial>();
       }
@@ -309,7 +321,7 @@ namespace Godtris{
       }
     }
 
-    public virtual void RenderPreview(Game game){
+    public void RenderPreview(Game game){
       Piece piece = GetNextPiece();
       if(piece!=null && previewPiece!=piece.name){
         if(previewBlocks!=null){
@@ -377,7 +389,7 @@ namespace Godtris{
       }
     }
 
-    protected bool CheckLines(){
+    private bool CheckLines(){
       for(int i=0; i < Game.GRID_HEIGHT; i++){
         int filled = 0;
         foreach(Block block in _blocks){
@@ -395,10 +407,15 @@ namespace Godtris{
           }
         }
       }
+      
+      if(_clearedLines.Count > 0){
+        _game.PlaySound(Sounds.CLEAR);
+      }
+
       foreach(int lineIndex in _clearedLines){
         foreach(Block block in _blocks){
           if(block.y == lineIndex){
-            block.color = "gray";
+            block.Clear();
           }
         }
       }
@@ -406,8 +423,8 @@ namespace Godtris{
       return _clearedLines.Count > 0;
     }
 
-    protected void DropLinesNaive(){
-      _game.PlaySound(Sounds.LINE_FALL);
+    private void DropLinesNaive(){
+      _game.PlaySound(Sounds.FALL);
 
       for(int i=0; i < _clearedLines.Count; i++){
         for(int j=1; j < Game.GRID_HEIGHT+4; j++){
