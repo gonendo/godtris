@@ -5,11 +5,18 @@ namespace Godtris{
 	{
 		private Game _game;
 		private Menu _menu;
+		private bool _gameStarted=false;
 
 		public override void _Ready()
 		{
 			GD.Print("Godtris");
 			LoadMenu();
+		}
+
+		public bool gameStarted{
+			get{
+				return _gameStarted;
+			}
 		}
 
 		private void LoadMenu(){
@@ -25,8 +32,9 @@ namespace Godtris{
 			_game = scene.Instance() as Game;
 			Position3D pos = GetNode("GamePosition") as Position3D;
 			_game.Translate(pos.Transform.origin);
+			_game.SetMode(mode);
 			AddChild(_game);
-			_game.StartMode(mode);
+			_gameStarted = true;
 		}
 
 		public override void _Process(float delta)

@@ -12,5 +12,7 @@ namespace Godtris{
     public const string FALL = "Fall";
     public const string LOCK = "Lock";
     public const string HARD_DROP = "HardDrop";
+    public const string READY = "Ready";
+    public const string GO = "Go";
   }
 }

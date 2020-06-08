@@ -13,13 +13,14 @@ namespace Godtris{
 		public Vector3 tetrionBottomLeftPosition;
 		public Position3D previewPosition;
 		private List<Block> _blocks;
-		public Mode mode;
-		public Controls controls;
+		private Mode _mode;
+		private Controls _controls;
 		private bool _started = false;
 		private bool _gameover = false;
 		private bool _starting = false;
-		private int _mode;
+		private int _modeId;
 		private uint _time;
+		private bool _firstStart=true;
 
 		public override void _Ready()
 		{
@@ -28,27 +29,33 @@ namespace Godtris{
 			tetrionBottomLeftPosition = tetrionBottomLeft.ToGlobal(tetrionBottomLeft.Transform.origin);
 
 			previewPosition = GetNode("PreviewPosition") as Position3D;
+
+			ShowHUD(false);
+			StartMode();
 		}
 
 		public override void _PhysicsProcess(float delta)
 		{
 			if(!_gameover && !_starting && Input.IsActionJustPressed(Controls.RESTART_ACTION_ID)){
-				StartMode(_mode);
+				StartMode();
 			}
 			if(_started && !_gameover){
 				TimeSpan t = TimeSpan.FromMilliseconds(OS.GetTicksMsec() - _time);
 				SetTime(string.Format(@"{0:mm\:ss\:ff}", t));
-				controls.Update();
-				mode.RenderPreview(this);
-				mode.Update();
+				_controls.Update();
+				_mode.RenderPreview(this);
+				_mode.Update();
 				foreach(Block block in _blocks){
 					block.Render();
 				}
 			}
 		}
 
-		public async void StartMode(int gameMode){
-			_mode = gameMode;
+		public void SetMode(int gameMode){
+			_modeId = gameMode;
+		}
+
+		public async void StartMode(){
 			_starting = true;
 			_started = false;
 			_gameover = false;
@@ -63,39 +70,51 @@ namespace Godtris{
 					_blocks.Add(new Block(i, j, this));
 				}
 			}
-			if(mode!=null){
-				mode.DestroyPreview(this);
+			if(_mode!=null){
+				_mode.DestroyPreview(this);
 			}
 
-			switch(_mode){
+			switch(_modeId){
 				case MASTER_MODE:
-					mode = new TGM2Mode(this, _blocks, 0);
+					_mode = new TGM2Mode(this, _blocks, 0);
 					break;
 				case DEATH_MODE:
-					mode = new DeathMode(this, _blocks, 0);
+					_mode = new DeathMode(this, _blocks, 0);
 					break;
 			}
 			
-			SetTetrionColor(mode.GetTetrionColor());
+			SetTetrionColor(_mode.GetTetrionColor());
 			SetLevel(0);
 			SetLines(0);
 			SetTime("00:00:00");
-			controls = new Controls(mode);
-			RichTextLabel readyLabel = GetNode("Viewport2/Ready") as RichTextLabel;
-			MeshInstance mesh = GetNode("Ready") as MeshInstance;
-			mesh.Show();
-			readyLabel.BbcodeText = "[center]READY[/center]";
+			_controls = new Controls(_mode);
+
 			Timer t = new Timer();
-			t.WaitTime = 0.5f;
+			t.WaitTime = 1.1f;
 			t.Autostart = true;
 			AddChild(t);
+
+			if(_firstStart){
+				await ToSignal(t, "timeout");
+				ShowHUD(true);
+				_firstStart = false;
+			}
+
+			t.WaitTime = 0.8f;
+			RichTextLabel readyLabel = GetNode("ReadyText") as RichTextLabel;
+			readyLabel.Show();
+			readyLabel.BbcodeText = "[center]READY[/center]";
+			PlaySound(Sounds.READY);
+			t.Stop();
+			t.Start();
 			await ToSignal(t, "timeout");
 			readyLabel.BbcodeText = "[center]GO ![/center]";
+			PlaySound(Sounds.GO);
 			t.Stop();
 			t.Start();
 
 			await ToSignal(t, "timeout");
-			mesh.Hide();
+			readyLabel.Hide();
 			t.QueueFree();
 
 			_time = OS.GetTicksMsec();
@@ -134,19 +153,38 @@ namespace Godtris{
 			_gameover = false;
 		}
 
+		private void ShowHUD(bool visible){
+			for(int i=0; i < GetChildCount(); i++){
+				if((GetChild(i) as RichTextLabel)!=null){
+					if(visible){
+						(GetChild(i) as RichTextLabel).Show();
+					}
+					else{
+						(GetChild(i) as RichTextLabel).Hide();
+					}
+				}
+			}
+			if(visible){
+				(GetNode("Line2D") as Line2D).Show();
+			}
+			else{
+				(GetNode("Line2D") as Line2D).Hide();
+			}
+		}
+
 		public void SetLevel(int level){
-			RichTextLabel label = GetNode("Viewport/Level") as RichTextLabel;
-			int lvl = Mathf.Min(level, mode.maxLevel);
-			label.BbcodeText = string.Format("[color=#ffff00]LEVEL[/color]\n [u]{0}[/u]\n {1}", string.Format("{0:D3}", lvl), string.Format("{0:D3}", mode.maxLevel));
+			RichTextLabel label = GetNode("LevelValue") as RichTextLabel;
+			int lvl = Mathf.Min(level, _mode.maxLevel);
+			label.BbcodeText = string.Format("{0}\n{1}", string.Format("{0:D3}", lvl), string.Format("{0:D3}", _mode.maxLevel));
 		}
 
 		public void SetLines(int lines){
-			RichTextLabel label = GetNode("Viewport/Lines") as RichTextLabel;
-			label.BbcodeText = string.Format("[color=#00ffff]LINES[/color]\n {0}", string.Format("{0:D3}", lines));			
+			RichTextLabel label = GetNode("LinesValue") as RichTextLabel;
+			label.BbcodeText = string.Format("{0}", string.Format("{0:D3}", lines));			
 		}
 
 		public void SetTime(string time){
-			RichTextLabel timeLabel = GetNode("Viewport3/Time") as RichTextLabel;
+			RichTextLabel timeLabel = GetNode("Time") as RichTextLabel;
 			timeLabel.BbcodeText = string.Format("[center]{0}[/center]", time);
 		}
 
@@ -166,7 +204,9 @@ namespace Godtris{
 		public void PlaySound(string id){
 			AudioStreamPlayer asp = GetNode(id) as AudioStreamPlayer;
 			AudioStreamOGGVorbis sound = asp.Stream as AudioStreamOGGVorbis;
-			sound.Loop = false;
+			if(sound!=null){
+				sound.Loop = false;
+			}
 			asp.Play();
 		}
 
